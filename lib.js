@@ -1,0 +1,126 @@
+const assets = {
+  "hero_soekarno": {
+    "url": "https://d2oir5eh8rty2e.cloudfront.net/assets/images/349930bf-8042-4739-b190-ca3913f36283.webp",
+    "type": "image",
+    "aspect_ratio": [950, 1018]
+  },
+  "hero_hatta": {
+    "url": "https://d2oir5eh8rty2e.cloudfront.net/assets/images/a103a7a7-460a-47e3-8aba-63bdec090708.webp",
+    "type": "image",
+    "aspect_ratio": [956, 1024]
+  },
+  "hero_cut_nyak_dien": {
+    "url": "https://d2oir5eh8rty2e.cloudfront.net/assets/images/cdcd2a36-d76e-4342-9379-b24ee40080b0.webp",
+    "type": "image",
+    "aspect_ratio": [862, 1021]
+  },
+  "hero_diponegoro": {
+    "url": "https://d2oir5eh8rty2e.cloudfront.net/assets/images/4b002b82-809d-4f9e-ab6e-e34f8824354a.webp",
+    "type": "image",
+    "aspect_ratio": [841, 1008]
+  },
+  "hero_kartini": {
+    "url": "https://d2oir5eh8rty2e.cloudfront.net/assets/images/e575aa1e-7d64-4f73-b131-087b0e12e550.webp",
+    "type": "image",
+    "aspect_ratio": [806, 1019]
+  },
+  "hero_hasanuddin": {
+    "url": "https://d2oir5eh8rty2e.cloudfront.net/assets/images/b7d37d68-1db6-4e74-8045-00284085cb9d.webp",
+    "type": "image",
+    "aspect_ratio": [842, 1022]
+  },
+  "hero_imam_bonjol": {
+    "url": "https://d2oir5eh8rty2e.cloudfront.net/assets/images/816312c2-1f19-4328-ac74-5a1d40cf7168.webp",
+    "type": "image",
+    "aspect_ratio": [874, 1016]
+  },
+  "hero_pattimura": {
+    "url": "https://d2oir5eh8rty2e.cloudfront.net/assets/images/6971f214-46c6-467a-a19d-50a5f5b1aba8.webp",
+    "type": "image",
+    "aspect_ratio": [868, 1019]
+  },
+  "background_batik": {
+    "url": "https://d2oir5eh8rty2e.cloudfront.net/assets/images/8a680c88-6544-47fd-9521-1199b29e5f72.webp",
+    "type": "image",
+    "aspect_ratio": [1024, 1536]
+  },
+  "sfx_correct": {
+    "url": "https://d2oir5eh8rty2e.cloudfront.net/assets/sounds/effect/57b29d66-bfa2-4658-9f4d-2f1dbc022a23.mp3",
+    "type": "audio"
+  },
+  "sfx_wrong": {
+    "url": "https://d2oir5eh8rty2e.cloudfront.net/assets/sounds/effect/b2afe3c3-9e9a-4e97-8425-0cec98d9d0a1.mp3",
+    "type": "audio"
+  },
+  "sfx_timeout": {
+    "url": "https://d2oir5eh8rty2e.cloudfront.net/assets/sounds/effect/1e034ed0-00a1-47e9-89a0-9ca2211a3f53.mp3",
+    "type": "audio"
+  },
+  "sfx_button_click": {
+    "url": "https://d2oir5eh8rty2e.cloudfront.net/assets/sounds/effect/527f3699-c2a0-4c8b-9110-406f249c5032.mp3",
+    "type": "audio"
+  },
+  "sfx_drag_pickup": {
+    "url": "https://d2oir5eh8rty2e.cloudfront.net/assets/sounds/effect/80ce0c55-8623-41c5-8861-24be9483b9e2.mp3",
+    "type": "audio"
+  },
+  "sfx_drag_drop": {
+    "url": "https://d2oir5eh8rty2e.cloudfront.net/assets/sounds/effect/5545685f-7024-4521-bf4f-1b577db695d4.mp3",
+    "type": "audio"
+  },
+  "sfx_victory": {
+    "url": "https://d2oir5eh8rty2e.cloudfront.net/assets/sounds/effect/52ea1420-a21e-4dc0-8b6d-57dba4ca7690.mp3",
+    "type": "audio"
+  },
+  "sfx_game_over": {
+    "url": "https://d2oir5eh8rty2e.cloudfront.net/assets/sounds/effect/d2602fa3-1a79-42a9-974f-2f1dcf56caa9.mp3",
+    "type": "audio"
+  },
+  "bgm_main": {
+    "url": "https://d2oir5eh8rty2e.cloudfront.net/assets/sounds/music/12379c1f-c59a-4117-b37c-5d76c0a03302.mp3",
+    "type": "audio"
+  }
+};
+
+window.lib = {
+  getAsset(id) {
+    return assets[id];
+  },
+
+  log(message) {
+    console.log('[Game]:', message);
+  },
+
+  async getUserGameState() {
+    try {
+      const saved = localStorage.getItem('gameState');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+      return { leaderboard: [] };
+    } catch (err) {
+      console.error('Error loading game state:', err);
+      return { leaderboard: [] };
+    }
+  },
+
+  async saveUserGameState(state) {
+    try {
+      localStorage.setItem('gameState', JSON.stringify(state));
+      return { success: true };
+    } catch (err) {
+      console.error('Error saving game state:', err);
+      return { success: false };
+    }
+  },
+
+  async deleteUserGameState() {
+    try {
+      localStorage.removeItem('gameState');
+      return { success: true };
+    } catch (err) {
+      console.error('Error deleting game state:', err);
+      return { success: false };
+    }
+  }
+};

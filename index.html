@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Pahlawan Drag & Drop</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=none"
+    />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* ============================================
+         * CSS RESET & BASE STYLES
+         * ============================================ */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+
+      body,
+      html {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        font-family: 'Poppins', sans-serif;
+        touch-action: none;
+      }
+
+      /* ============================================
+         * CSS CUSTOM PROPERTIES
+         * ============================================ */
+      :root {
+        /* Colors */
+        --color-primary: #dc2626;
+        --color-primary-dark: #b91c1c;
+        --color-white: #ffffff;
+        --color-gold: #f59e0b;
+        --color-gold-dark: #d97706;
+        --color-success: #10b981;
+        --color-error: #ef4444;
+        --color-text-dark: #1f2937;
+        --color-text-medium: #6b7280;
+        --color-text-light: #9ca3af;
+        --color-bg-light: #f3f4f6;
+        --color-glass: rgba(255, 255, 255, 0.85);
+
+        /* Shadows */
+        --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+        --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+        --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+        --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.25);
+        --glow-gold: 0 0 20px rgba(245, 158, 11, 0.4);
+
+        /* Spacing (8px grid) */
+        --space-xs: 8px;
+        --space-sm: 16px;
+        --space-md: 24px;
+        --space-lg: 32px;
+        --space-xl: 48px;
+
+        /* Animation */
+        --transition-fast: 150ms;
+        --transition-normal: 300ms;
+        --transition-slow: 500ms;
+        --ease-out: cubic-bezier(0, 0, 0.2, 1);
+        --ease-bounce: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+      }
+
+      /* ============================================
+         * GAME CONTAINER & BACKGROUND
+         * ============================================ */
+      #game-container {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        background: linear-gradient(
+          180deg,
+          var(--color-primary) 0%,
+          var(--color-white) 100%
+        );
+      }
+
+      #background {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.15;
+        z-index: 0;
+      }
+
+      /* ============================================
+         * SPLASH SCREEN
+         * ============================================ */
+      #splash-screen {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          135deg,
+          var(--color-primary),
+          var(--color-white)
+        );
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        animation: fadeIn var(--transition-slow) var(--ease-out);
+      }
+
+      #splash-screen h1 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 56px;
+        color: var(--color-gold);
+        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+        margin-bottom: var(--space-xl);
+        text-align: center;
+        padding: 0 var(--space-md);
+        letter-spacing: 2px;
+      }
+
+      .loader {
+        width: 80px;
+        height: 80px;
+        border: 8px solid var(--color-white);
+        border-top: 8px solid var(--color-gold);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      /* ============================================
+         * MAIN MENU
+         * ============================================ */
+      #main-menu {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 100;
+        padding: var(--space-md);
+      }
+
+      #main-menu h1 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 64px;
+        color: var(--color-gold);
+        text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.4);
+        margin-bottom: var(--space-xl);
+        text-align: center;
+        line-height: 1.1;
+        letter-spacing: 3px;
+      }
+
+      .menu-button {
+        width: 100%;
+        max-width: 400px;
+        height: 96px;
+        margin: var(--space-sm) 0;
+        background: linear-gradient(
+          135deg,
+          var(--color-gold),
+          var(--color-gold-dark)
+        );
+        border: none;
+        border-radius: 16px;
+        color: var(--color-white);
+        font-family: 'Poppins', sans-serif;
+        font-size: 24px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: var(--shadow-lg);
+        transition: transform var(--transition-fast) var(--ease-out),
+          box-shadow var(--transition-fast) var(--ease-out);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .menu-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        transition: left var(--transition-slow) var(--ease-out);
+      }
+
+      .menu-button:active {
+        transform: scale(0.95);
+        box-shadow: var(--shadow-md);
+      }
+
+      @media (hover: hover) {
+        .menu-button:hover::before {
+          left: 100%;
+        }
+      }
+
+      /* ============================================
+         * GAME SCREEN
+         * ============================================ */
+      #game-screen {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: none;
+        flex-direction: column;
+        z-index: 50;
+      }
+
+      /* ============================================
+         * HUD (SIMPLIFIED)
+         * ============================================ */
+      #hud {
+        width: 100%;
+        height: 80px;
+        background: linear-gradient(
+          135deg,
+          rgba(30, 58, 138, 0.95),
+          rgba(59, 130, 246, 0.95)
+        );
+        backdrop-filter: blur(10px);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 var(--space-sm);
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        z-index: 60;
+      }
+
+      .hud-left {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+      }
+
+      .hud-right {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+      }
+
+      #info-toggle {
+        width: 48px;
+        height: 48px;
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 12px;
+        color: var(--color-white);
+        font-size: 24px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all var(--transition-fast) var(--ease-out);
+      }
+
+      #info-toggle:active {
+        transform: scale(0.9);
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      #timer-circle {
+        width: 56px;
+        height: 56px;
+        position: relative;
+      }
+
+      #timer-svg {
+        transform: rotate(-90deg);
+      }
+
+      #timer-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--color-white);
+      }
+
+      #lives-display {
+        display: flex;
+        gap: 4px;
+      }
+
+      .heart {
+        display: inline-block;
+        width: 28px;
+        height: 28px;
+        font-size: 28px;
+        line-height: 1;
+      }
+
+      .heart.filled {
+        color: var(--color-error);
+        filter: drop-shadow(0 2px 4px rgba(239, 68, 68, 0.4));
+      }
+
+      .heart.empty {
+        color: rgba(255, 255, 255, 0.3);
+      }
+
+      /* Info Panel (Collapsible) */
+      #info-panel {
+        position: absolute;
+        top: 80px;
+        right: 0;
+        width: 200px;
+        background: var(--color-glass);
+        backdrop-filter: blur(10px);
+        border-radius: 0 0 0 20px;
+        padding: var(--space-sm);
+        box-shadow: var(--shadow-lg);
+        transform: translateX(100%);
+        transition: transform var(--transition-normal) var(--ease-out);
+        z-index: 55;
+      }
+
+      #info-panel.is-visible {
+        transform: translateX(0);
+      }
+
+      .info-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-xs) 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      .info-item:last-child {
+        border-bottom: none;
+      }
+
+      .info-label {
+        font-size: 14px;
+        color: var(--color-text-medium);
+        font-weight: 600;
+      }
+
+      .info-value {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--color-gold);
+      }
+
+      /* ============================================
+         * GAME AREA (VERTICAL MOBILE-FIRST LAYOUT)
+         * ============================================ */
+      #game-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: var(--space-md);
+        gap: var(--space-md);
+        position: relative;
+        z-index: 55;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* Hero Section (Top) */
+      #hero-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-sm);
+      }
+
+      #hero-portrait {
+        width: 100%;
+        max-width: 320px;
+        height: auto;
+        aspect-ratio: 4/5;
+        object-fit: cover;
+        border: 4px solid var(--color-gold);
+        border-radius: 16px;
+        box-shadow: var(--shadow-xl);
+        background: var(--color-white);
+      }
+
+      /* Drop Zone (Middle) */
+      #drop-zone {
+        width: 100%;
+        max-width: 400px;
+        height: 120px;
+        border: 4px dashed var(--color-gold);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.4);
+        backdrop-filter: blur(5px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--color-text-medium);
+        transition: all var(--transition-normal) var(--ease-out);
+        margin: 0 auto;
+      }
+
+      #drop-zone.highlight-correct {
+        border-color: var(--color-success);
+        background: rgba(16, 185, 129, 0.2);
+        border-style: solid;
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+      }
+
+      #drop-zone.highlight-wrong {
+        border-color: var(--color-error);
+        background: rgba(239, 68, 68, 0.2);
+        border-style: solid;
+        box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+      }
+
+      #drop-zone.has-card {
+        border-style: solid;
+        border-color: var(--color-gold);
+        background: var(--color-glass);
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--color-text-dark);
+      }
+
+      /* Name Cards Section (Bottom - Thumb Zone) */
+      #name-cards-section {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-sm);
+        padding-bottom: var(--space-md);
+      }
+
+      .name-card {
+        width: 100%;
+        height: 96px;
+        background: var(--color-white);
+        border: 3px solid var(--color-gold);
+        border-radius: 16px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--color-text-dark);
+        cursor: grab;
+        box-shadow: var(--shadow-md);
+        transition: transform var(--transition-fast) var(--ease-out),
+          box-shadow var(--transition-fast) var(--ease-out);
+        touch-action: none;
+        position: relative;
+      }
+
+      .name-card:active {
+        cursor: grabbing;
+      }
+
+      .name-card.dragging {
+        transform: scale(1.05);
+        box-shadow: var(--shadow-xl), var(--glow-gold);
+        z-index: 1000;
+        opacity: 0.95;
+        border-color: var(--color-gold-dark);
+      }
+
+      /* ============================================
+         * MODAL SYSTEM
+         * ============================================ */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(4px);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+        animation: fadeIn var(--transition-normal) var(--ease-out);
+      }
+
+      .modal {
+        background: var(--color-white);
+        border-radius: 24px;
+        padding: var(--space-xl);
+        max-width: 500px;
+        width: 90%;
+        box-shadow: var(--shadow-xl);
+        text-align: center;
+        animation: modalSlideUp var(--transition-normal) var(--ease-bounce);
+      }
+
+      .modal h2 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 40px;
+        margin-bottom: var(--space-md);
+        color: var(--color-text-dark);
+        letter-spacing: 1px;
+      }
+
+      .modal p {
+        font-size: 18px;
+        margin-bottom: var(--space-md);
+        color: var(--color-text-medium);
+        line-height: 1.5;
+      }
+
+      .modal-button {
+        min-width: 200px;
+        height: 96px;
+        margin: var(--space-xs);
+        background: linear-gradient(
+          135deg,
+          var(--color-gold),
+          var(--color-gold-dark)
+        );
+        border: none;
+        border-radius: 16px;
+        color: var(--color-white);
+        font-family: 'Poppins', sans-serif;
+        font-size: 20px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: var(--shadow-md);
+        transition: transform var(--transition-fast) var(--ease-out),
+          box-shadow var(--transition-fast) var(--ease-out);
+      }
+
+      .modal-button:active {
+        transform: scale(0.95);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .modal-button.secondary {
+        background: linear-gradient(
+          135deg,
+          var(--color-text-medium),
+          var(--color-text-dark)
+        );
+      }
+
+      /* Settings Modal Specific */
+      .slider-container {
+        margin: var(--space-md) 0;
+        text-align: left;
+      }
+
+      .slider-label {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--color-text-dark);
+        margin-bottom: var(--space-xs);
+        display: block;
+      }
+
+      .slider {
+        width: 100%;
+        height: 48px;
+        -webkit-appearance: none;
+        appearance: none;
+        background: var(--color-bg-light);
+        border-radius: 24px;
+        outline: none;
+      }
+
+      .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(
+          135deg,
+          var(--color-gold),
+          var(--color-gold-dark)
+        );
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: var(--shadow-md);
+        transition: transform var(--transition-fast) var(--ease-out);
+      }
+
+      .slider::-webkit-slider-thumb:active {
+        transform: scale(1.1);
+      }
+
+      .slider::-moz-range-thumb {
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(
+          135deg,
+          var(--color-gold),
+          var(--color-gold-dark)
+        );
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: var(--shadow-md);
+        border: none;
+      }
+
+      /* Profile Modal Specific */
+      #leaderboard {
+        max-height: 400px;
+        overflow-y: auto;
+        margin-top: var(--space-md);
+        text-align: left;
+      }
+
+      .leaderboard-entry {
+        padding: var(--space-sm);
+        margin: var(--space-xs) 0;
+        background: var(--color-bg-light);
+        border-radius: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .leaderboard-entry.current-player {
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        border: 2px solid var(--color-gold);
+      }
+
+      .leaderboard-rank {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--color-gold);
+        margin-right: var(--space-sm);
+        min-width: 40px;
+      }
+
+      .leaderboard-name {
+        flex: 1;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--color-text-dark);
+      }
+
+      .leaderboard-score {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--color-primary);
+      }
+
+      /* ============================================
+         * ANIMATIONS
+         * ============================================ */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes modalSlideUp {
+        from {
+          opacity: 0;
+          transform: translateY(40px) scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-10px);
+        }
+        75% {
+          transform: translateX(10px);
+        }
+      }
+
+      .shake {
+        animation: shake var(--transition-slow);
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      .bounce {
+        animation: bounce var(--transition-slow) var(--ease-bounce);
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.02);
+        }
+      }
+
+      .pulse {
+        animation: pulse var(--transition-normal) ease-in-out infinite;
+      }
+
+      /* Particle Effect */
+      .particle {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        background: var(--color-gold);
+        border-radius: 50%;
+        pointer-events: none;
+        animation: particle-float 1s ease-out forwards;
+        box-shadow: 0 0 10px var(--color-gold);
+      }
+
+      @keyframes particle-float {
+        0% {
+          transform: translate(0, 0) scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(var(--tx), var(--ty)) scale(0);
+          opacity: 0;
+        }
+      }
+
+      /* Reduced Motion Support */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <script src="lib.js"></script>
+    <div id="game-container">
+      <img id="background" alt="Background" />
+
+      <!-- Splash Screen -->
+      <div id="splash-screen">
+        <h1>Pahlawan<br />Drag & Drop</h1>
+        <div class="loader"></div>
+      </div>
+
+      <!-- Main Menu -->
+      <div id="main-menu">
+        <h1>Pahlawan<br />Drag & Drop</h1>
+        <button class="menu-button" id="btn-start">Mulai Game</button>
+        <button class="menu-button" id="btn-settings">Pengaturan</button>
+        <button class="menu-button" id="btn-profile">Profile</button>
+        <button class="menu-button" id="btn-exit">Keluar Game</button>
+      </div>
+
+      <!-- Game Screen -->
+      <div id="game-screen">
+        <!-- Simplified HUD -->
+        <div id="hud">
+          <div class="hud-left">
+            <button id="info-toggle" aria-label="Toggle Info">ℹ️</button>
+          </div>
+          <div class="hud-right">
+            <div id="timer-circle">
+              <svg id="timer-svg" width="56" height="56">
+                <circle
+                  cx="28"
+                  cy="28"
+                  r="24"
+                  fill="none"
+                  stroke="rgba(255,255,255,0.2)"
+                  stroke-width="4"
+                />
+                <circle
+                  id="timer-progress"
+                  cx="28"
+                  cy="28"
+                  r="24"
+                  fill="none"
+                  stroke="#F59E0B"
+                  stroke-width="4"
+                  stroke-dasharray="150.8"
+                  stroke-dashoffset="0"
+                />
+              </svg>
+              <div id="timer-text">60</div>
+            </div>
+            <div id="lives-display"></div>
+          </div>
+        </div>
+
+        <!-- Collapsible Info Panel -->
+        <div id="info-panel">
+          <div class="info-item">
+            <span class="info-label">Level</span>
+            <span class="info-value" id="level-display">1</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Skor</span>
+            <span class="info-value" id="score-display">0</span>
+          </div>
+        </div>
+
+        <!-- Game Area (Vertical Layout) -->
+        <div id="game-area">
+          <!-- Hero Portrait (Top) -->
+          <div id="hero-section">
+            <img id="hero-portrait" alt="Hero" />
+          </div>
+
+          <!-- Drop Zone (Middle) -->
+          <div id="drop-zone">Seret nama di sini</div>
+
+          <!-- Name Cards (Bottom - Thumb Zone) -->
+          <div id="name-cards-section"></div>
+        </div>
+      </div>
+
+      <!-- Settings Modal -->
+      <div id="settings-modal" class="modal-overlay">
+        <div class="modal">
+          <h2>Pengaturan</h2>
+          <div class="slider-container">
+            <label class="slider-label">Volume SFX</label>
+            <input
+              type="range"
+              class="slider"
+              id="sfx-slider"
+              min="0"
+              max="100"
+              value="70"
+            />
+          </div>
+          <div class="slider-container">
+            <label class="slider-label">Volume BGM</label>
+            <input
+              type="range"
+              class="slider"
+              id="bgm-slider"
+              min="0"
+              max="100"
+              value="50"
+            />
+          </div>
+          <button class="modal-button" id="btn-close-settings">Tutup</button>
+        </div>
+      </div>
+
+      <!-- Profile Modal -->
+      <div id="profile-modal" class="modal-overlay">
+        <div class="modal">
+          <h2>Profile</h2>
+          <p>Skor Anda: <strong id="player-score">0</strong></p>
+          <p>Skor Tertinggi: <strong id="player-high-score">0</strong></p>
+          <div id="leaderboard"></div>
+          <button class="modal-button" id="btn-close-profile">Tutup</button>
+        </div>
+      </div>
+
+      <!-- Exit Modal -->
+      <div id="exit-modal" class="modal-overlay">
+        <div class="modal">
+          <h2>Keluar Game</h2>
+          <p>Apakah kamu yakin ingin keluar dari permainan ini?</p>
+          <button class="modal-button" id="btn-confirm-exit">Iya</button>
+          <button class="modal-button secondary" id="btn-cancel-exit">
+            Tidak
+          </button>
+        </div>
+      </div>
+
+      <!-- Correct Answer Modal -->
+      <div id="correct-modal" class="modal-overlay">
+        <div class="modal">
+          <h2 style="color: #10b981">✓ Benar!</h2>
+          <p>Jawaban Anda benar!</p>
+          <p>Skor: <strong id="correct-score">+100</strong></p>
+        </div>
+      </div>
+
+      <!-- Wrong Answer Modal -->
+      <div id="wrong-modal" class="modal-overlay">
+        <div class="modal">
+          <h2 style="color: #ef4444">✗ Salah!</h2>
+          <p>Jawaban Anda salah!</p>
+          <p>Nyawa berkurang 1</p>
+        </div>
+      </div>
+
+      <!-- Try Again Modal -->
+      <div id="tryagain-modal" class="modal-overlay">
+        <div class="modal">
+          <h2 style="color: #f59e0b">⏰ Waktu Habis!</h2>
+          <p>Waktu Anda telah habis!</p>
+          <p>Nyawa berkurang 1</p>
+          <button class="modal-button" id="btn-try-again">Coba Lagi</button>
+        </div>
+      </div>
+
+      <!-- Game Over Modal -->
+      <div id="gameover-modal" class="modal-overlay">
+        <div class="modal">
+          <h2 style="color: #ef4444">Game Over</h2>
+          <p>Permainan berakhir!</p>
+          <p>Skor Akhir: <strong id="gameover-score">0</strong></p>
+          <button class="modal-button" id="btn-restart">Main Lagi</button>
+          <button class="modal-button secondary" id="btn-menu">
+            Menu Utama
+          </button>
+        </div>
+      </div>
+
+      <!-- Victory Modal -->
+      <div id="victory-modal" class="modal-overlay">
+        <div class="modal">
+          <h2 style="color: #10b981">🎉 Victory!</h2>
+          <p>Selamat! Anda telah menyelesaikan semua level!</p>
+          <p>Skor Total: <strong id="victory-score">0</strong></p>
+          <button class="modal-button" id="btn-play-again">Main Lagi</button>
+          <button class="modal-button secondary" id="btn-menu-victory">
+            Menu Utama
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /* ==================================================
+       * GAME OVERVIEW:
+       * Educational drag-and-drop game about Indonesian heroes.
+       * Players match hero names to portraits across 8 levels.
+       * Features: 60-second timer per level, 5 lives, scoring system.
+       * Edit mode: Not applicable - fixed educational content.
+       *
+       * GAME STATE SHAPE:
+       * window.gameConfig = {
+       *   currentLevel: 1,        // Current level (1-8)
+       *   score: 0,               // Current score
+       *   lives: 5,               // Remaining lives
+       *   highScore: 0,           // Player's high score
+       *   sfxVolume: 0.7,         // SFX volume (0-1)
+       *   bgmVolume: 0.5          // BGM volume (0-1)
+       * }
+       * ==================================================
+       */
+
+      // Level data
+      const LEVELS = [
+        {
+          heroId: 'hero_soekarno',
+          correct: 'Soekarno',
+          wrong: ['Soeharto', 'Mohammad Hatta'],
+        },
+        {
+          heroId: 'hero_hatta',
+          correct: 'Mohammad Hatta',
+          wrong: ['Soekarno', 'Tan Malaka'],
+        },
+        {
+          heroId: 'hero_cut_nyak_dien',
+          correct: 'Cut Nyak Dien',
+          wrong: ['Kartini', 'Dewi Sartika'],
+        },
+        {
+          heroId: 'hero_diponegoro',
+          correct: 'Diponegoro',
+          wrong: ['Pattimura', 'Tuanku Imam Bonjol'],
+        },
+        {
+          heroId: 'hero_kartini',
+          correct: 'Kartini',
+          wrong: ['Cut Nyak Dien', 'Dewi Sartika'],
+        },
+        {
+          heroId: 'hero_hasanuddin',
+          correct: 'Sultan Hasanuddin',
+          wrong: ['Sultan Agung', 'Pattimura'],
+        },
+        {
+          heroId: 'hero_imam_bonjol',
+          correct: 'Tuanku Imam Bonjol',
+          wrong: ['Diponegoro', 'Teuku Umar'],
+        },
+        {
+          heroId: 'hero_pattimura',
+          correct: 'Pattimura',
+          wrong: ['Sultan Hasanuddin', 'Teuku Umar'],
+        },
+      ];
+
+      // Asset cache
+      const assetCache = {};
+
+      // Audio context and buffers
+      let audioContext;
+      let audioBuffers = {};
+      let bgmSource = null;
+      let bgmGainNode = null;
+      let sfxGainNode = null;
+
+      // Game state
+      let gamePhase = 'splash'; // splash, menu, playing
+      let currentLevel = 0;
+      let timeRemaining = 60;
+      let timerInterval = null;
+      let draggedCard = null;
+      let dragOffset = { x: 0, y: 0 };
+      let currentAnswer = null;
+
+      // Initialize game
+      function run(mode) {
+        lib.log('run() called. Mode: ' + mode);
+
+        // Initialize audio context
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        sfxGainNode = audioContext.createGain();
+        sfxGainNode.connect(audioContext.destination);
+        bgmGainNode = audioContext.createGain();
+        bgmGainNode.connect(audioContext.destination);
+
+        document.addEventListener('click', () => {
+          if (audioContext.state === 'suspended') {
+            audioContext.resume();
+          }
+        }, { once: true });
+
+        // Initialize gameConfig if not exists
+        if (!window.gameConfig) {
+          window.gameConfig = {
+            currentLevel: 1,
+            score: 0,
+            lives: 5,
+            highScore: 0,
+            sfxVolume: 0.7,
+            bgmVolume: 0.5,
+          };
+        }
+
+        // Apply volume settings
+        sfxGainNode.gain.value = window.gameConfig.sfxVolume;
+        bgmGainNode.gain.value = window.gameConfig.bgmVolume;
+
+        // Preload assets
+        preloadAssets();
+      }
+
+      // Preload all assets
+      function preloadAssets() {
+        const assetIds = [
+          'background_batik',
+          'hero_soekarno',
+          'hero_hatta',
+          'hero_cut_nyak_dien',
+          'hero_diponegoro',
+          'hero_kartini',
+          'hero_hasanuddin',
+          'hero_imam_bonjol',
+          'hero_pattimura',
+          'sfx_correct',
+          'sfx_wrong',
+          'sfx_timeout',
+          'sfx_button_click',
+          'sfx_drag_pickup',
+          'sfx_drag_drop',
+          'sfx_victory',
+          'sfx_game_over',
+          'bgm_main',
+        ];
+
+        let loadedCount = 0;
+        const totalAssets = assetIds.length;
+
+        assetIds.forEach((id) => {
+          const assetInfo = lib.getAsset(id);
+          if (assetInfo) {
+            if (assetInfo.type === 'audio') {
+              fetch(assetInfo.url)
+                .then((response) => response.arrayBuffer())
+                .then((arrayBuffer) =>
+                  audioContext.decodeAudioData(arrayBuffer)
+                )
+                .then((audioBuffer) => {
+                  audioBuffers[id] = audioBuffer;
+                  loadedCount++;
+                  checkLoadComplete();
+                })
+                .catch((err) => {
+                  lib.log('Error loading audio ' + id + ': ' + err);
+                  loadedCount++;
+                  checkLoadComplete();
+                });
+            } else {
+              const img = new Image();
+              img.onload = () => {
+                assetCache[id] = img;
+                loadedCount++;
+                checkLoadComplete();
+              };
+              img.onerror = () => {
+                lib.log('Error loading image ' + id);
+                loadedCount++;
+                checkLoadComplete();
+              };
+              img.src = assetInfo.url;
+            }
+          }
+        });
+
+        function checkLoadComplete() {
+          if (loadedCount >= totalAssets) {
+            initGame();
+          }
+        }
+      }
+
+      // Initialize game after assets loaded
+      function initGame() {
+        // Set background
+        const bgImg = document.getElementById('background');
+        if (assetCache['background_batik']) {
+          bgImg.src = assetCache['background_batik'].src;
+        }
+
+        // Setup event listeners
+        setupEventListeners();
+
+        // Show main menu after splash
+        setTimeout(() => {
+          showMainMenu();
+        }, 2000);
+
+        // Start BGM
+        playBGM();
+      }
+
+      // Setup all event listeners
+      function setupEventListeners() {
+        // Info panel toggle
+        document
+          .getElementById('info-toggle')
+          .addEventListener('click', toggleInfoPanel);
+
+        // Menu buttons
+        document.getElementById('btn-start').addEventListener('click', () => {
+          playSFX('sfx_button_click');
+          startGame();
+        });
+
+        document
+          .getElementById('btn-settings')
+          .addEventListener('click', () => {
+            playSFX('sfx_button_click');
+            showSettings();
+          });
+
+        document.getElementById('btn-profile').addEventListener('click', () => {
+          playSFX('sfx_button_click');
+          showProfile();
+        });
+
+        document.getElementById('btn-exit').addEventListener('click', () => {
+          playSFX('sfx_button_click');
+          showExitConfirmation();
+        });
+
+        // Settings modal
+        document.getElementById('sfx-slider').addEventListener('input', (e) => {
+          window.gameConfig.sfxVolume = e.target.value / 100;
+          sfxGainNode.gain.value = window.gameConfig.sfxVolume;
+        });
+
+        document.getElementById('bgm-slider').addEventListener('input', (e) => {
+          window.gameConfig.bgmVolume = e.target.value / 100;
+          bgmGainNode.gain.value = window.gameConfig.bgmVolume;
+        });
+
+        document
+          .getElementById('btn-close-settings')
+          .addEventListener('click', () => {
+            playSFX('sfx_button_click');
+            hideModal('settings-modal');
+          });
+
+        // Profile modal
+        document
+          .getElementById('btn-close-profile')
+          .addEventListener('click', () => {
+            playSFX('sfx_button_click');
+            hideModal('profile-modal');
+          });
+
+        // Exit modal
+        document
+          .getElementById('btn-confirm-exit')
+          .addEventListener('click', () => {
+            playSFX('sfx_button_click');
+            window.location.href = 'https://game.patrion.id/';
+          });
+
+        document
+          .getElementById('btn-cancel-exit')
+          .addEventListener('click', () => {
+            playSFX('sfx_button_click');
+            hideModal('exit-modal');
+          });
+
+        // Try again modal
+        document
+          .getElementById('btn-try-again')
+          .addEventListener('click', () => {
+            playSFX('sfx_button_click');
+            hideModal('tryagain-modal');
+            resetLevel();
+          });
+
+        // Game over modal
+        document.getElementById('btn-restart').addEventListener('click', () => {
+          playSFX('sfx_button_click');
+          hideModal('gameover-modal');
+          startGame();
+        });
+
+        document.getElementById('btn-menu').addEventListener('click', () => {
+          playSFX('sfx_button_click');
+          hideModal('gameover-modal');
+          showMainMenu();
+        });
+
+        // Victory modal
+        document
+          .getElementById('btn-play-again')
+          .addEventListener('click', () => {
+            playSFX('sfx_button_click');
+            hideModal('victory-modal');
+            startGame();
+          });
+
+        document
+          .getElementById('btn-menu-victory')
+          .addEventListener('click', () => {
+            playSFX('sfx_button_click');
+            hideModal('victory-modal');
+            showMainMenu();
+          });
+      }
+
+      // Toggle info panel
+      function toggleInfoPanel() {
+        const panel = document.getElementById('info-panel');
+        panel.classList.toggle('is-visible');
+        playSFX('sfx_button_click');
+      }
+
+      // Show main menu
+      function showMainMenu() {
+        gamePhase = 'menu';
+        document.getElementById('splash-screen').style.display = 'none';
+        document.getElementById('game-screen').style.display = 'none';
+        document.getElementById('main-menu').style.display = 'flex';
+
+        // Hide info panel
+        document.getElementById('info-panel').classList.remove('is-visible');
+      }
+
+      // Start game
+      function startGame() {
+        gamePhase = 'playing';
+
+        // Reset game state
+        window.gameConfig.currentLevel = 1;
+        window.gameConfig.score = 0;
+        window.gameConfig.lives = 5;
+        currentLevel = 0;
+
+        // Show game screen
+        document.getElementById('main-menu').style.display = 'none';
+        document.getElementById('game-screen').style.display = 'flex';
+
+        // Load first level
+        loadLevel(0);
+      }
+
+      // Load level
+      function loadLevel(levelIndex) {
+        currentLevel = levelIndex;
+        const level = LEVELS[levelIndex];
+
+        // Update HUD
+        document.getElementById('level-display').textContent = levelIndex + 1;
+        document.getElementById('score-display').textContent =
+          window.gameConfig.score;
+        updateLivesDisplay();
+
+        // Load hero image
+        const heroImg = document.getElementById('hero-portrait');
+        if (assetCache[level.heroId]) {
+          heroImg.src = assetCache[level.heroId].src;
+        }
+
+        // Create name cards
+        const nameCardsSection = document.getElementById('name-cards-section');
+        nameCardsSection.innerHTML = '';
+
+        // Shuffle answers
+        const answers = [level.correct, ...level.wrong];
+        shuffleArray(answers);
+
+        answers.forEach((name) => {
+          const card = document.createElement('div');
+          card.className = 'name-card';
+          card.textContent = name;
+          card.dataset.name = name;
+          card.dataset.correct = name === level.correct ? 'true' : 'false';
+
+          // Touch events
+          card.addEventListener('touchstart', handleDragStart);
+          card.addEventListener('touchmove', handleDragMove);
+          card.addEventListener('touchend', handleDragEnd);
+
+          // Mouse events
+          card.addEventListener('mousedown', handleDragStart);
+
+          nameCardsSection.appendChild(card);
+        });
+
+        // Reset drop zone
+        const dropZone = document.getElementById('drop-zone');
+        dropZone.textContent = 'Seret nama di sini';
+        dropZone.className = '';
+        currentAnswer = null;
+
+        // Start timer
+        startTimer();
+      }
+
+      // Update lives display
+      function updateLivesDisplay() {
+        const livesDisplay = document.getElementById('lives-display');
+        livesDisplay.innerHTML = '';
+
+        for (let i = 0; i < 5; i++) {
+          const heart = document.createElement('span');
+          heart.className = 'heart';
+          heart.textContent = '♥';
+
+          if (i < window.gameConfig.lives) {
+            heart.classList.add('filled');
+          } else {
+            heart.classList.add('empty');
+          }
+
+          livesDisplay.appendChild(heart);
+        }
+      }
+
+      // Start timer
+      function startTimer() {
+        timeRemaining = 60;
+        updateTimerDisplay();
+
+        if (timerInterval) {
+          clearInterval(timerInterval);
+        }
+
+        timerInterval = setInterval(() => {
+          timeRemaining--;
+          updateTimerDisplay();
+
+          if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            handleTimeout();
+          }
+        }, 1000);
+      }
+
+      // Update timer display
+      function updateTimerDisplay() {
+        document.getElementById('timer-text').textContent = timeRemaining;
+
+        const circumference = 2 * Math.PI * 24;
+        const progress = (timeRemaining / 60) * circumference;
+        document.getElementById('timer-progress').style.strokeDashoffset =
+          circumference - progress;
+      }
+
+      // Handle timeout
+      function handleTimeout() {
+        playSFX('sfx_timeout');
+        window.gameConfig.lives--;
+        updateLivesDisplay();
+
+        if (window.gameConfig.lives <= 0) {
+          showGameOver();
+        } else {
+          showModal('tryagain-modal');
+        }
+      }
+
+      // Reset level (after timeout)
+      function resetLevel() {
+        loadLevel(currentLevel);
+      }
+
+      // Drag and drop handlers
+      function handleDragStart(e) {
+        e.preventDefault();
+
+        if (draggedCard) return;
+
+        playSFX('sfx_drag_pickup');
+
+        const card = e.target.closest('.name-card');
+        if (!card) return;
+
+        draggedCard = card;
+        draggedCard.classList.add('dragging');
+
+        const rect = card.getBoundingClientRect();
+        const clientX = e.type.includes('touch')
+          ? e.touches[0].clientX
+          : e.clientX;
+        const clientY = e.type.includes('touch')
+          ? e.touches[0].clientY
+          : e.clientY;
+
+        dragOffset.x = clientX - rect.left;
+        dragOffset.y = clientY - rect.top;
+
+        // Store original position
+        draggedCard.dataset.originalX = rect.left;
+        draggedCard.dataset.originalY = rect.top;
+
+        // Make card position fixed for dragging
+        draggedCard.style.position = 'fixed';
+        draggedCard.style.left = rect.left + 'px';
+        draggedCard.style.top = rect.top + 'px';
+        draggedCard.style.width = rect.width + 'px';
+        draggedCard.style.zIndex = '1000';
+
+        // Add mouse move listener for desktop
+        if (e.type === 'mousedown') {
+          document.addEventListener('mousemove', handleDragMove);
+          document.addEventListener('mouseup', handleDragEnd);
+        }
+      }
+
+      function handleDragMove(e) {
+        if (!draggedCard) return;
+
+        e.preventDefault();
+
+        const clientX = e.type.includes('touch')
+          ? e.touches[0].clientX
+          : e.clientX;
+        const clientY = e.type.includes('touch')
+          ? e.touches[0].clientY
+          : e.clientY;
+
+        draggedCard.style.left = clientX - dragOffset.x + 'px';
+        draggedCard.style.top = clientY - dragOffset.y + 'px';
+
+        // Check if over drop zone
+        const dropZone = document.getElementById('drop-zone');
+        const dropRect = dropZone.getBoundingClientRect();
+
+        if (
+          clientX >= dropRect.left &&
+          clientX <= dropRect.right &&
+          clientY >= dropRect.top &&
+          clientY <= dropRect.bottom
+        ) {
+          const isCorrect = draggedCard.dataset.correct === 'true';
+          dropZone.className = isCorrect
+            ? 'highlight-correct'
+            : 'highlight-wrong';
+        } else {
+          dropZone.className = '';
+        }
+      }
+
+      function handleDragEnd(e) {
+        if (!draggedCard) return;
+
+        e.preventDefault();
+
+        const clientX = e.type.includes('touch')
+          ? e.changedTouches[0].clientX
+          : e.clientX;
+        const clientY = e.type.includes('touch')
+          ? e.changedTouches[0].clientY
+          : e.clientY;
+
+        const dropZone = document.getElementById('drop-zone');
+        const dropRect = dropZone.getBoundingClientRect();
+
+        // Check if dropped in drop zone
+        if (
+          clientX >= dropRect.left &&
+          clientX <= dropRect.right &&
+          clientY >= dropRect.top &&
+          clientY <= dropRect.bottom
+        ) {
+          playSFX('sfx_drag_drop');
+          handleAnswer(draggedCard);
+        } else {
+          // Return to original position
+          returnCardToOriginal(draggedCard);
+        }
+
+        // Cleanup
+        if (e.type === 'mouseup') {
+          document.removeEventListener('mousemove', handleDragMove);
+          document.removeEventListener('mouseup', handleDragEnd);
+        }
+
+        draggedCard = null;
+      }
+
+      // Return card to original position
+      function returnCardToOriginal(card) {
+        card.style.position = '';
+        card.style.left = '';
+        card.style.top = '';
+        card.style.width = '';
+        card.style.zIndex = '';
+        card.classList.remove('dragging');
+      }
+
+      // Handle answer
+      function handleAnswer(card) {
+        clearInterval(timerInterval);
+
+        const isCorrect = card.dataset.correct === 'true';
+        const dropZone = document.getElementById('drop-zone');
+
+        if (isCorrect) {
+          // Correct answer
+          playSFX('sfx_correct');
+          window.gameConfig.score += 100;
+          document.getElementById('score-display').textContent =
+            window.gameConfig.score;
+
+          // Place card in drop zone
+          dropZone.textContent = card.textContent;
+          dropZone.classList.add('has-card', 'bounce');
+          returnCardToOriginal(card);
+          card.style.display = 'none';
+
+          // Create particles
+          createParticles(dropZone);
+
+          // Show correct modal
+          document.getElementById('correct-score').textContent = '+100';
+          showModal('correct-modal');
+
+          // Auto close and proceed
+          setTimeout(() => {
+            hideModal('correct-modal');
+            dropZone.classList.remove('bounce');
+
+            if (currentLevel < LEVELS.length - 1) {
+              loadLevel(currentLevel + 1);
+            } else {
+              showVictory();
+            }
+          }, 3000);
+        } else {
+          // Wrong answer
+          playSFX('sfx_wrong');
+          window.gameConfig.lives--;
+          updateLivesDisplay();
+
+          dropZone.classList.add('shake');
+          returnCardToOriginal(card);
+
+          setTimeout(() => {
+            dropZone.classList.remove('shake');
+          }, 500);
+
+          if (window.gameConfig.lives <= 0) {
+            showGameOver();
+          } else {
+            showModal('wrong-modal');
+            setTimeout(() => {
+              hideModal('wrong-modal');
+              resetLevel();
+            }, 3000);
+          }
+        }
+      }
+
+      // Create particle effect
+      function createParticles(element) {
+        const rect = element.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        for (let i = 0; i < 12; i++) {
+          const particle = document.createElement('div');
+          particle.className = 'particle';
+          particle.style.left = centerX + 'px';
+          particle.style.top = centerY + 'px';
+
+          const angle = (i / 12) * Math.PI * 2;
+          const distance = 100;
+          const tx = Math.cos(angle) * distance;
+          const ty = Math.sin(angle) * distance;
+
+          particle.style.setProperty('--tx', tx + 'px');
+          particle.style.setProperty('--ty', ty + 'px');
+
+          document.body.appendChild(particle);
+
+          setTimeout(() => {
+            particle.remove();
+          }, 1000);
+        }
+      }
+
+      // Show victory
+      function showVictory() {
+        playSFX('sfx_victory');
+
+        // Update high score
+        if (window.gameConfig.score > window.gameConfig.highScore) {
+          window.gameConfig.highScore = window.gameConfig.score;
+        }
+
+        // Save to leaderboard
+        saveToLeaderboard(window.gameConfig.score);
+
+        document.getElementById('victory-score').textContent =
+          window.gameConfig.score;
+        showModal('victory-modal');
+      }
+
+      // Show game over
+      function showGameOver() {
+        playSFX('sfx_game_over');
+
+        // Update high score
+        if (window.gameConfig.score > window.gameConfig.highScore) {
+          window.gameConfig.highScore = window.gameConfig.score;
+        }
+
+        // Save to leaderboard
+        saveToLeaderboard(window.gameConfig.score);
+
+        document.getElementById('gameover-score').textContent =
+          window.gameConfig.score;
+        showModal('gameover-modal');
+      }
+
+      // Show settings
+      function showSettings() {
+        document.getElementById('sfx-slider').value =
+          window.gameConfig.sfxVolume * 100;
+        document.getElementById('bgm-slider').value =
+          window.gameConfig.bgmVolume * 100;
+        showModal('settings-modal');
+      }
+
+      // Show profile
+      function showProfile() {
+        document.getElementById('player-score').textContent =
+          window.gameConfig.score;
+        document.getElementById('player-high-score').textContent =
+          window.gameConfig.highScore;
+
+        loadLeaderboard();
+        showModal('profile-modal');
+      }
+
+      // Show exit confirmation
+      function showExitConfirmation() {
+        showModal('exit-modal');
+      }
+
+      // Modal helpers
+      function showModal(modalId) {
+        document.getElementById(modalId).style.display = 'flex';
+      }
+
+      function hideModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+      }
+
+      // Audio functions
+      function playSFX(sfxId) {
+        if (!audioBuffers[sfxId]) return;
+
+        const source = audioContext.createBufferSource();
+        source.buffer = audioBuffers[sfxId];
+        source.connect(sfxGainNode);
+        source.start(0);
+      }
+
+      function playBGM() {
+        if (!audioBuffers['bgm_main']) return;
+
+        if (bgmSource) {
+          bgmSource.stop();
+        }
+
+        bgmSource = audioContext.createBufferSource();
+        bgmSource.buffer = audioBuffers['bgm_main'];
+        bgmSource.loop = true;
+        bgmSource.connect(bgmGainNode);
+        bgmSource.start(0);
+      }
+
+      // Leaderboard functions
+      function saveToLeaderboard(score) {
+        lib
+          .getUserGameState()
+          .then((userData) => {
+            let leaderboard = userData.leaderboard || [];
+
+            // Add current score
+            leaderboard.push({
+              name: 'Player',
+              score: score,
+              timestamp: Date.now(),
+            });
+
+            // Sort by score descending
+            leaderboard.sort((a, b) => b.score - a.score);
+
+            // Keep top 10
+            leaderboard = leaderboard.slice(0, 10);
+
+            // Save back
+            lib.saveUserGameState({ leaderboard: leaderboard });
+          })
+          .catch((err) => {
+            lib.log('Error saving leaderboard: ' + err);
+          });
+      }
+
+      function loadLeaderboard() {
+        lib
+          .getUserGameState()
+          .then((userData) => {
+            const leaderboard = userData.leaderboard || [];
+            const leaderboardDiv = document.getElementById('leaderboard');
+            leaderboardDiv.innerHTML = '';
+
+            if (leaderboard.length === 0) {
+              leaderboardDiv.innerHTML =
+                '<p style="text-align: center; color: #6B7280;">Belum ada data leaderboard</p>';
+              return;
+            }
+
+            leaderboard.forEach((entry, index) => {
+              const entryDiv = document.createElement('div');
+              entryDiv.className = 'leaderboard-entry';
+
+              if (index === 0) {
+                entryDiv.classList.add('current-player');
+              }
+
+              entryDiv.innerHTML = `
+                        <span class="leaderboard-rank">#${index + 1}</span>
+                        <span class="leaderboard-name">${entry.name}</span>
+                        <span class="leaderboard-score">${entry.score}</span>
+                    `;
+
+              leaderboardDiv.appendChild(entryDiv);
+            });
+          })
+          .catch((err) => {
+            lib.log('Error loading leaderboard: ' + err);
+            document.getElementById('leaderboard').innerHTML =
+              '<p style="text-align: center; color: #EF4444;">Error loading leaderboard</p>';
+          });
+      }
+
+      // Utility functions
+      function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        run('play');
+      });
+    </script>
+  </body>
+</html>
