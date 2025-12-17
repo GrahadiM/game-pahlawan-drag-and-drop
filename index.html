@@ -1059,6 +1059,51 @@
                 border-color: var(--color-gold);
             }
         }
+        
+        /* Screenshot Preview Styling */
+        #screenshot-preview {
+            margin-top: var(--space-md);
+            text-align: center;
+        }
+        
+        .screenshot-canvas {
+            width: 100%;
+            max-width: 300px;
+            border-radius: var(--radius-md);
+            border: 3px solid var(--color-gold);
+            box-shadow: var(--shadow-lg);
+            margin: var(--space-sm) auto;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-md);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: var(--space-sm);
+            transition: transform var(--transition-fast) var(--ease-out);
+        }
+        
+        .download-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* Loading Indicator */
+        .loading-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--color-gold);
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
     </style>
 </head>
 
@@ -1086,7 +1131,7 @@
                     <button class="difficulty-btn" data-difficulty="hard">Sulit</button>
                 </div>
                 <div id="difficulty-info">
-                    <p><strong>Sedang:</strong> 60 detik/level, 5 nyawa, ×1.5 skor</p>
+                    <p><strong>Sedang:</strong> 60 detik/level, 3 nyawa, ×1.5 skor</p>
                 </div>
             </div>
 
@@ -1579,10 +1624,11 @@
                             .then((audioBuffer) => {
                                 audioBuffers[id] = audioBuffer;
                                 loadedCount++;
+                                console.log(`Loaded audio: ${id}`);
                                 checkLoadComplete();
                             })
                             .catch((err) => {
-                                console.log('Error loading audio ' + id + ': ' + err);
+                                console.warn('Error loading audio ' + id + ': ' + err);
                                 loadedCount++;
                                 checkLoadComplete();
                             });
@@ -1591,10 +1637,11 @@
                         img.onload = () => {
                             assetCache[id] = img;
                             loadedCount++;
+                            console.log(`Loaded image: ${id}`);
                             checkLoadComplete();
                         };
                         img.onerror = () => {
-                            console.log('Error loading image ' + id);
+                            console.warn('Error loading image ' + id);
                             loadedCount++;
                             checkLoadComplete();
                         };
@@ -1602,6 +1649,7 @@
                     }
                 } else {
                     // Fallback for testing
+                    console.warn(`Asset info not found for: ${id}`);
                     loadedCount++;
                     checkLoadComplete();
                 }
@@ -1609,6 +1657,7 @@
 
             function checkLoadComplete() {
                 if (loadedCount >= totalAssets) {
+                    console.log(`All assets loaded: ${loadedCount}/${totalAssets}`);
                     initGame();
                 }
             }
@@ -1881,6 +1930,21 @@
                 case 'copy':
                     navigator.clipboard.writeText(shareData.text).then(() => {
                         alert('Teks berhasil disalin!');
+                    }).catch(err => {
+                        console.error('Failed to copy text:', err);
+                        // Fallback for older browsers
+                        const textArea = document.createElement('textarea');
+                        textArea.value = shareData.text;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        try {
+                            document.execCommand('copy');
+                            alert('Teks berhasil disalin!');
+                        } catch (err) {
+                            console.error('Fallback copy failed:', err);
+                            alert('Gagal menyalin teks. Silakan salin manual.');
+                        }
+                        document.body.removeChild(textArea);
                     });
                     break;
             }
@@ -2038,6 +2102,9 @@
             const heroImg = document.getElementById('hero-portrait');
             if (assetCache[level.heroId]) {
                 heroImg.src = assetCache[level.heroId].src;
+            } else {
+                console.warn(`Image not found for hero: ${level.heroId}`);
+                heroImg.src = '';
             }
 
             const nameCardsSection = document.getElementById('name-cards-section');
@@ -2358,22 +2425,147 @@
             }
         }
 
-        function captureScreenshot() {
-            const preview = document.getElementById('screenshot-preview');
-            preview.innerHTML = '<p style="text-align: center; color: var(--color-text-medium);">📸 Membuat screenshot...</p>';
+        // ============================================
+        // IMPROVED SCREENSHOT FUNCTIONALITY
+        // ============================================
 
-            setTimeout(() => {
+        async function captureScreenshot() {
+            const preview = document.getElementById('screenshot-preview');
+            
+            // Clear previous content
+            preview.innerHTML = `
+                <div style="text-align: center;">
+                    <div class="loading-indicator"></div>
+                    <p style="margin-top: 8px; color: var(--color-text-medium);">Membuat screenshot...</p>
+                </div>
+            `;
+            
+            playSFX('sfx_button_click');
+            
+            // Check if html2canvas is available
+            if (typeof html2canvas === 'undefined') {
                 preview.innerHTML = `
                     <div style="text-align: center; padding: var(--space-md); background: var(--color-bg-light); border-radius: var(--radius-lg);">
-                        <p style="color: var(--color-success); margin-bottom: var(--space-sm);">✓ Screenshot berhasil dibuat</p>
+                        <p style="color: var(--color-error); margin-bottom: var(--space-sm);">❌ Library screenshot tidak tersedia</p>
                         <p style="font-size: 0.9rem; color: var(--color-text-medium);">
-                            Fitur screenshot membutuhkan library html2canvas.
-                            Untuk implementasi lengkap, pastikan library tersedia.
+                            Pastikan script html2canvas dimuat dengan benar.
                         </p>
                     </div>
                 `;
-                playSFX('sfx_correct');
-            }, 1000);
+                return;
+            }
+            
+            try {
+                // Create a temporary container for screenshot
+                const screenshotContainer = document.createElement('div');
+                screenshotContainer.style.position = 'fixed';
+                screenshotContainer.style.left = '-9999px';
+                screenshotContainer.style.top = '-9999px';
+                screenshotContainer.style.width = '400px';
+                screenshotContainer.style.backgroundColor = 'white';
+                screenshotContainer.style.borderRadius = 'var(--radius-lg)';
+                screenshotContainer.style.padding = 'var(--space-lg)';
+                screenshotContainer.style.boxShadow = 'var(--shadow-xl)';
+                screenshotContainer.style.textAlign = 'center';
+                
+                // Add content to screenshot
+                const difficultyText = DIFFICULTY_SETTINGS[window.gameConfig.difficulty].name;
+                const date = new Date().toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+                
+                screenshotContainer.innerHTML = `
+                    <div style="margin-bottom: var(--space-md);">
+                        <h1 style="font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--color-gold); margin-bottom: var(--space-sm);">
+                            Pahlawan Puzzle
+                        </h1>
+                        <div style="font-size: 3rem; margin-bottom: var(--space-sm);">🎮</div>
+                        <p style="color: var(--color-text-medium); margin-bottom: var(--space-sm);">Prestasi Game</p>
+                    </div>
+                    
+                    <div style="background: var(--color-bg-light); padding: var(--space-md); border-radius: var(--radius-md); margin-bottom: var(--space-md);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-sm);">
+                            <span>Pemain:</span>
+                            <strong>${window.gameConfig.playerName}</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-sm);">
+                            <span>Skor:</span>
+                            <strong style="color: var(--color-gold); font-size: 1.2rem;">${window.gameConfig.score}</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-sm);">
+                            <span>Kesulitan:</span>
+                            <strong>${difficultyText}</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Tanggal:</span>
+                            <strong>${date}</strong>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: var(--space-md); font-size: 0.85rem; color: var(--color-text-light);">
+                        <p>game.patrion.id</p>
+                    </div>
+                `;
+                
+                document.body.appendChild(screenshotContainer);
+                
+                // Take screenshot
+                const canvas = await html2canvas(screenshotContainer, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    allowTaint: true
+                });
+                
+                // Remove temporary container
+                document.body.removeChild(screenshotContainer);
+                
+                // Display the screenshot
+                preview.innerHTML = '';
+                
+                const canvasContainer = document.createElement('div');
+                canvasContainer.style.textAlign = 'center';
+                
+                const canvasElement = document.createElement('canvas');
+                canvasElement.className = 'screenshot-canvas';
+                canvasElement.width = canvas.width;
+                canvasElement.height = canvas.height;
+                canvasElement.getContext('2d').drawImage(canvas, 0, 0);
+                
+                canvasContainer.appendChild(canvasElement);
+                
+                // Add download button
+                const downloadBtn = document.createElement('button');
+                downloadBtn.className = 'download-btn';
+                downloadBtn.innerHTML = '<span>💾</span> Download Gambar';
+                downloadBtn.style.marginTop = 'var(--space-md)';
+                downloadBtn.onclick = () => {
+                    const link = document.createElement('a');
+                    link.download = `pahlawan-puzzle-${window.gameConfig.playerName}-${Date.now()}.png`;
+                    link.href = canvasElement.toDataURL('image/png');
+                    link.click();
+                    playSFX('sfx_button_click');
+                };
+                
+                canvasContainer.appendChild(downloadBtn);
+                preview.appendChild(canvasContainer);
+                
+                console.log('Screenshot created successfully');
+                
+            } catch (error) {
+                console.error('Error creating screenshot:', error);
+                preview.innerHTML = `
+                    <div style="text-align: center; padding: var(--space-md); background: var(--color-bg-light); border-radius: var(--radius-lg);">
+                        <p style="color: var(--color-error); margin-bottom: var(--space-sm);">❌ Gagal membuat screenshot</p>
+                        <p style="font-size: 0.9rem; color: var(--color-text-medium);">
+                            ${error.message || 'Terjadi kesalahan saat membuat gambar.'}
+                        </p>
+                    </div>
+                `;
+            }
         }
 
         function shuffleArray(array) {

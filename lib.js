@@ -1,83 +1,83 @@
 const assets = {
     "hero_soekarno": {
-        "url": "https://game-pahlawan-puzzle.patrion.id/assets/images/hero_soekarno.webp",
+        "url": "assets/images/hero_soekarno.webp",
         "type": "image",
         "aspect_ratio": [950, 1018]
     },
     "hero_hatta": {
-        "url": "https://game-pahlawan-puzzle.patrion.id/assets/images/hero_hatta.webp",
+        "url": "assets/images/hero_hatta.webp",
         "type": "image",
         "aspect_ratio": [956, 1024]
     },
     "hero_cut_nyak_dien": {
-        "url": "https://game-pahlawan-puzzle.patrion.id/assets/images/hero_cut_nyak_dien.webp",
+        "url": "assets/images/hero_cut_nyak_dien.webp",
         "type": "image",
         "aspect_ratio": [862, 1021]
     },
     "hero_diponegoro": {
-        "url": "https://game-pahlawan-puzzle.patrion.id/assets/images/hero_diponegoro.webp",
+        "url": "assets/images/hero_diponegoro.webp",
         "type": "image",
         "aspect_ratio": [841, 1008]
     },
     "hero_kartini": {
-        "url": "https://game-pahlawan-puzzle.patrion.id/assets/images/hero_kartini.webp",
+        "url": "assets/images/hero_kartini.webp",
         "type": "image",
         "aspect_ratio": [806, 1019]
     },
     "hero_hasanuddin": {
-        "url": "https://game-pahlawan-puzzle.patrion.id/assets/images/hero_hasanuddin.webp",
+        "url": "assets/images/hero_hasanuddin.webp",
         "type": "image",
         "aspect_ratio": [842, 1022]
     },
     "hero_imam_bonjol": {
-        "url": "https://game-pahlawan-puzzle.patrion.id/assets/images/hero_imam_bonjol.webp",
+        "url": "assets/images/hero_imam_bonjol.webp",
         "type": "image",
         "aspect_ratio": [874, 1016]
     },
     "hero_pattimura": {
-        "url": "https://game-pahlawan-puzzle.patrion.id/assets/images/hero_pattimura.webp",
+        "url": "assets/images/hero_pattimura.webp",
         "type": "image",
         "aspect_ratio": [868, 1019]
     },
     "background_batik": {
-        "url": "https://game-pahlawan-puzzle.patrion.id/assets/images/background_batik.webp",
+        "url": "assets/images/background_batik.webp",
         "type": "image",
         "aspect_ratio": [1024, 1536]
     },
     "sfx_correct": {
-        "url": "https://game-pahlawan-puzzle.patrion.id/assets/sounds/sfx_correct.mp3",
+        "url": "assets/sounds/sfx_correct.mp3",
         "type": "audio"
     },
     "sfx_wrong": {
-        "url": "https://game-pahlawan-puzzle.patrion.id/assets/sounds/sfx_wrong.mp3",
+        "url": "assets/sounds/sfx_wrong.mp3",
         "type": "audio"
     },
     "sfx_timeout": {
-        "url": "https://game-pahlawan-puzzle.patrion.id/assets/sounds/sfx_timeout.mp3",
+        "url": "assets/sounds/sfx_timeout.mp3",
         "type": "audio"
     },
     "sfx_button_click": {
-        "url": "https://game-pahlawan-puzzle.patrion.id/assets/sounds/sfx_button_click.mp3",
+        "url": "assets/sounds/sfx_button_click.mp3",
         "type": "audio"
     },
     "sfx_drag_pickup": {
-        "url": "https://game-pahlawan-puzzle.patrion.id/assets/sounds/sfx_drag_pickup.mp3",
+        "url": "assets/sounds/sfx_drag_pickup.mp3",
         "type": "audio"
     },
     "sfx_drag_drop": {
-        "url": "https://game-pahlawan-puzzle.patrion.id/assets/sounds/sfx_drag_drop.mp3",
+        "url": "assets/sounds/sfx_drag_drop.mp3",
         "type": "audio"
     },
     "sfx_victory": {
-        "url": "https://game-pahlawan-puzzle.patrion.id/assets/sounds/sfx_victory.mp3",
+        "url": "assets/sounds/sfx_victory.mp3",
         "type": "audio"
     },
     "sfx_game_over": {
-        "url": "https://game-pahlawan-puzzle.patrion.id/assets/sounds/sfx_game_over.mp3",
+        "url": "assets/sounds/sfx_game_over.mp3",
         "type": "audio"
     },
     "bgm_main": {
-        "url": "https://game-pahlawan-puzzle.patrion.id/assets/sounds/bgm_main.mp3",
+        "url": "assets/sounds/bgm_main.mp3",
         "type": "audio"
     }
 };
