@@ -2426,7 +2426,7 @@
         }
 
         // ============================================
-        // IMPROVED SCREENSHOT FUNCTIONALITY
+        // IMPROVED SCREENSHOT FUNCTIONALITY WITH GAME COLORS
         // ============================================
 
         async function captureScreenshot() {
@@ -2456,19 +2456,38 @@
             }
             
             try {
+                // Get CSS custom properties from game
+                const rootStyles = getComputedStyle(document.documentElement);
+                const getColor = (property) => rootStyles.getPropertyValue(property).trim();
+                
+                const gameColors = {
+                    primary: getColor('--color-primary'),
+                    primaryDark: getColor('--color-primary-dark'),
+                    gold: getColor('--color-gold'),
+                    goldDark: getColor('--color-gold-dark'),
+                    success: getColor('--color-success'),
+                    error: getColor('--color-error'),
+                    white: getColor('--color-white'),
+                    textDark: getColor('--color-text-dark'),
+                    textMedium: getColor('--color-text-medium'),
+                    textLight: getColor('--color-text-light'),
+                    bgLight: getColor('--color-bg-light')
+                };
+                
                 // Create a temporary container for screenshot
                 const screenshotContainer = document.createElement('div');
                 screenshotContainer.style.position = 'fixed';
                 screenshotContainer.style.left = '-9999px';
                 screenshotContainer.style.top = '-9999px';
                 screenshotContainer.style.width = '400px';
-                screenshotContainer.style.backgroundColor = 'white';
-                screenshotContainer.style.borderRadius = 'var(--radius-lg)';
-                screenshotContainer.style.padding = 'var(--space-lg)';
-                screenshotContainer.style.boxShadow = 'var(--shadow-xl)';
+                screenshotContainer.style.backgroundColor = gameColors.white;
+                screenshotContainer.style.borderRadius = '20px'; // var(--radius-xl)
+                screenshotContainer.style.padding = '32px'; // var(--space-xl)
+                screenshotContainer.style.boxShadow = '0 16px 32px rgba(0, 0, 0, 0.25)'; // var(--shadow-xl)
                 screenshotContainer.style.textAlign = 'center';
+                screenshotContainer.style.fontFamily = "'Poppins', sans-serif";
                 
-                // Add content to screenshot
+                // Get game info
                 const difficultyText = DIFFICULTY_SETTINGS[window.gameConfig.difficulty].name;
                 const date = new Date().toLocaleDateString('id-ID', {
                     day: 'numeric',
@@ -2476,48 +2495,235 @@
                     year: 'numeric'
                 });
                 
+                // Create gradient for header (matching game gradient)
+                const headerGradient = `linear-gradient(135deg, ${gameColors.primary}, ${gameColors.white})`;
+                
+                // Create content with game colors
                 screenshotContainer.innerHTML = `
-                    <div style="margin-bottom: var(--space-md);">
-                        <h1 style="font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--color-gold); margin-bottom: var(--space-sm);">
-                            Pahlawan Puzzle
+                    <div style="
+                        background: ${headerGradient};
+                        margin: -32px -32px 24px -32px;
+                        padding: 32px;
+                        border-radius: 20px 20px 0 0;
+                        position: relative;
+                        overflow: hidden;
+                    ">
+                        <div style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            bottom: 0;
+                            opacity: 0.1;
+                            background-image: url('https://game-pahlawan-puzzle.patrion.id/assets/images/background_batik.webp');
+                            background-size: cover;
+                            background-position: center;
+                        "></div>
+                        
+                        <h1 style="
+                            font-family: 'Bebas Neue', sans-serif;
+                            font-size: 2.5rem;
+                            color: ${gameColors.gold};
+                            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
+                            position: relative;
+                            z-index: 1;
+                        ">
+                            PATRION<br />Pahlawan Puzzle
                         </h1>
-                        <div style="font-size: 3rem; margin-bottom: var(--space-sm);">🎮</div>
-                        <p style="color: var(--color-text-medium); margin-bottom: var(--space-sm);">Prestasi Game</p>
                     </div>
                     
-                    <div style="background: var(--color-bg-light); padding: var(--space-md); border-radius: var(--radius-md); margin-bottom: var(--space-md);">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-sm);">
-                            <span>Pemain:</span>
-                            <strong>${window.gameConfig.playerName}</strong>
+                    <!-- Player Info Card (matching game card style) -->
+                    <div style="
+                        background: ${gameColors.white};
+                        border: 3px solid ${gameColors.gold};
+                        border-radius: 16px; /* var(--radius-lg) */
+                        padding: 24px; /* var(--space-lg) */
+                        margin-bottom: 24px;
+                        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* var(--shadow-lg) */
+                        text-align: left;
+                    ">
+                        <!-- Player Name -->
+                        <div style="
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            margin-bottom: 16px;
+                            padding-bottom: 12px;
+                            border-bottom: 1px solid ${gameColors.bgLight};
+                        ">
+                            <span style="
+                                color: ${gameColors.textMedium};
+                                font-weight: 600;
+                                font-size: 0.9rem;
+                            ">Pemain</span>
+                            <strong style="
+                                color: ${gameColors.textDark};
+                                font-size: 1.1rem;
+                            ">${window.gameConfig.playerName}</strong>
                         </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-sm);">
-                            <span>Skor:</span>
-                            <strong style="color: var(--color-gold); font-size: 1.2rem;">${window.gameConfig.score}</strong>
+                        
+                        <!-- Score (Highlighted like in-game) -->
+                        <div style="
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            margin-bottom: 16px;
+                            padding-bottom: 12px;
+                            border-bottom: 1px solid ${gameColors.bgLight};
+                        ">
+                            <span style="
+                                color: ${gameColors.textMedium};
+                                font-weight: 600;
+                                font-size: 0.9rem;
+                            ">Skor</span>
+                            <strong style="
+                                color: ${gameColors.gold};
+                                font-size: 1.5rem;
+                                font-weight: 700;
+                                text-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
+                            ">${window.gameConfig.score}</strong>
                         </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-sm);">
-                            <span>Kesulitan:</span>
-                            <strong>${difficultyText}</strong>
+                        
+                        <!-- Difficulty with color-coded badge -->
+                        <div style="
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            margin-bottom: 16px;
+                            padding-bottom: 12px;
+                            border-bottom: 1px solid ${gameColors.bgLight};
+                        ">
+                            <span style="
+                                color: ${gameColors.textMedium};
+                                font-weight: 600;
+                                font-size: 0.9rem;
+                            ">Kesulitan</span>
+                            <div style="
+                                background: ${window.gameConfig.difficulty === 'easy' ? 
+                                    'linear-gradient(135deg, #10b981, #059669)' : 
+                                    window.gameConfig.difficulty === 'medium' ? 
+                                    'linear-gradient(135deg, #f59e0b, #d97706)' : 
+                                    'linear-gradient(135deg, #ef4444, #dc2626)'};
+                                color: white;
+                                padding: 4px 12px;
+                                border-radius: 20px;
+                                font-size: 0.85rem;
+                                font-weight: 600;
+                                display: flex;
+                                align-items: center;
+                                gap: 4px;
+                            ">
+                                ${window.gameConfig.difficulty === 'easy' ? '🌱' : 
+                                window.gameConfig.difficulty === 'medium' ? '⚡' : '🔥'}
+                                ${difficultyText}
+                            </div>
                         </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span>Tanggal:</span>
-                            <strong>${date}</strong>
+                        
+                        <!-- Date -->
+                        <div style="
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                        ">
+                            <span style="
+                                color: ${gameColors.textMedium};
+                                font-weight: 600;
+                                font-size: 0.9rem;
+                            ">Tanggal</span>
+                            <strong style="
+                                color: ${gameColors.textDark};
+                                font-size: 0.9rem;
+                            ">${date}</strong>
                         </div>
                     </div>
                     
-                    <div style="margin-top: var(--space-md); font-size: 0.85rem; color: var(--color-text-light);">
-                        <p>game.patrion.id</p>
+                    <!-- Game Info Section -->
+                    <div style="
+                        background: ${gameColors.bgLight};
+                        border-radius: 12px; /* var(--radius-md) */
+                        padding: 16px; /* var(--space-md) */
+                        margin-bottom: 24px;
+                    ">
+                        <h3 style="
+                            color: ${gameColors.textDark};
+                            margin-bottom: 12px;
+                            font-size: 1.1rem;
+                            font-weight: 600;
+                            text-align: center;
+                        ">🏆 Statistik Game</h3>
+                        
+                        <div style="
+                            display: grid;
+                            grid-template-columns: 1fr 1fr;
+                            gap: 12px;
+                        ">
+                            <div style="text-align: center;">
+                                <div style="
+                                    color: ${gameColors.textMedium};
+                                    font-size: 0.85rem;
+                                    margin-bottom: 4px;
+                                ">Level Tertinggi</div>
+                                <div style="
+                                    color: ${gameColors.gold};
+                                    font-size: 1.2rem;
+                                    font-weight: 700;
+                                ">${window.gameConfig.currentLevel}</div>
+                            </div>
+                            
+                            <div style="text-align: center;">
+                                <div style="
+                                    color: ${gameColors.textMedium};
+                                    font-size: 0.85rem;
+                                    margin-bottom: 4px;
+                                ">Skor Tertinggi</div>
+                                <div style="
+                                    color: ${gameColors.success};
+                                    font-size: 1.2rem;
+                                    font-weight: 700;
+                                ">${window.gameConfig.highScore}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Footer with branding -->
+                    <div style="
+                        margin-top: 8px;
+                        font-size: 0.85rem;
+                        color: ${gameColors.textLight};
+                        text-align: center;
+                        padding-top: 16px;
+                        border-top: 1px solid ${gameColors.bgLight};
+                    ">
+                        <div style="
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 8px;
+                            margin-bottom: 4px;
+                        ">
+                            <span style="color: ${gameColors.primary};">◼</span>
+                            <span style="color: ${gameColors.gold};">◼</span>
+                            <span style="color: ${gameColors.success};">◼</span>
+                        </div>
+                        <p style="margin: 0;">Dibuat dengan ❤️ oleh <strong>PATRION</strong></p>
+                        <p style="margin: 4px 0 0 0; font-size: 0.75rem;">game.patrion.id</p>
                     </div>
                 `;
                 
                 document.body.appendChild(screenshotContainer);
                 
+                // Wait a moment for styles to apply
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
                 // Take screenshot
                 const canvas = await html2canvas(screenshotContainer, {
                     scale: 2,
                     useCORS: true,
-                    backgroundColor: '#ffffff',
+                    backgroundColor: gameColors.white,
                     logging: false,
-                    allowTaint: true
+                    allowTaint: true,
+                    imageTimeout: 5000,
+                    removeContainer: true
                 });
                 
                 // Remove temporary container
@@ -2533,27 +2739,58 @@
                 canvasElement.className = 'screenshot-canvas';
                 canvasElement.width = canvas.width;
                 canvasElement.height = canvas.height;
-                canvasElement.getContext('2d').drawImage(canvas, 0, 0);
+                const ctx = canvasElement.getContext('2d');
+                
+                // Add subtle background pattern to canvas
+                ctx.fillStyle = gameColors.white;
+                ctx.fillRect(0, 0, canvasElement.width, canvasElement.height);
+                
+                // Draw the screenshot
+                ctx.drawImage(canvas, 0, 0);
+                
+                // Add a subtle border like in-game cards
+                ctx.strokeStyle = gameColors.gold;
+                ctx.lineWidth = 6;
+                ctx.strokeRect(3, 3, canvasElement.width - 6, canvasElement.height - 6);
                 
                 canvasContainer.appendChild(canvasElement);
                 
-                // Add download button
+                // Add download button with game-style
                 const downloadBtn = document.createElement('button');
-                downloadBtn.className = 'download-btn';
+                downloadBtn.className = 'modal-button';
                 downloadBtn.innerHTML = '<span>💾</span> Download Gambar';
                 downloadBtn.style.marginTop = 'var(--space-md)';
                 downloadBtn.onclick = () => {
                     const link = document.createElement('a');
-                    link.download = `pahlawan-puzzle-${window.gameConfig.playerName}-${Date.now()}.png`;
+                    const fileName = `pahlawan-puzzle-${window.gameConfig.playerName.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}.png`;
+                    link.download = fileName;
                     link.href = canvasElement.toDataURL('image/png');
                     link.click();
                     playSFX('sfx_button_click');
+                    
+                    // Show success message
+                    const originalText = downloadBtn.innerHTML;
+                    downloadBtn.innerHTML = '<span>✅</span> Berhasil!';
+                    downloadBtn.disabled = true;
+                    setTimeout(() => {
+                        downloadBtn.innerHTML = originalText;
+                        downloadBtn.disabled = false;
+                    }, 2000);
                 };
                 
                 canvasContainer.appendChild(downloadBtn);
+                
+                // Add share options
+                const shareNote = document.createElement('p');
+                shareNote.style.color = 'var(--color-text-medium)';
+                shareNote.style.fontSize = '0.9rem';
+                shareNote.style.marginTop = 'var(--space-sm)';
+                shareNote.innerHTML = 'Bagikan screenshot ini dengan tombol di atas!';
+                
+                canvasContainer.appendChild(shareNote);
                 preview.appendChild(canvasContainer);
                 
-                console.log('Screenshot created successfully');
+                console.log('Screenshot created successfully with game colors');
                 
             } catch (error) {
                 console.error('Error creating screenshot:', error);
@@ -2563,6 +2800,9 @@
                         <p style="font-size: 0.9rem; color: var(--color-text-medium);">
                             ${error.message || 'Terjadi kesalahan saat membuat gambar.'}
                         </p>
+                        <button class="modal-button secondary" onclick="captureScreenshot()" style="margin-top: var(--space-sm);">
+                            <span>🔄</span> Coba Lagi
+                        </button>
                     </div>
                 `;
             }
