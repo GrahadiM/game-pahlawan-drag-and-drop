@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PATRION - Pahlawan Puzzle</title>
+    <title>PATRION - Tebak Pahlawan Indonesia</title>
+    <meta name="description" content="Game edukasi tebak pahlawan Indonesia dengan drag-and-drop. Belajar sejarah sambil bermain!">
+    <meta name="keywords" content="pahlawan, sejarah, indonesia, game edukasi, puzzle, tebak gambar">
     <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico" />
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
     <!-- HTML2Canvas untuk Screenshot -->
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
@@ -51,17 +52,23 @@
             /* Colors */
             --color-primary: #dc2626;
             --color-primary-dark: #b91c1c;
+            --color-primary-light: #fee2e2;
             --color-white: #ffffff;
             --color-gold: #f59e0b;
+            --color-gold-light: #fef3c7;
             --color-gold-dark: #d97706;
             --color-success: #10b981;
+            --color-success-light: #d1fae5;
             --color-error: #ef4444;
+            --color-error-light: #fee2e2;
             --color-text-dark: #1f2937;
             --color-text-medium: #6b7280;
             --color-text-light: #9ca3af;
             --color-bg-light: #f3f4f6;
+            --color-bg-dark: #111827;
             --color-glass: rgba(255, 255, 255, 0.95);
             --color-overlay: rgba(0, 0, 0, 0.7);
+            --color-overlay-light: rgba(0, 0, 0, 0.3);
 
             /* Shadows */
             --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -69,6 +76,7 @@
             --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
             --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.25);
             --glow-gold: 0 0 20px rgba(245, 158, 11, 0.4);
+            --glow-success: 0 0 20px rgba(16, 185, 129, 0.4);
 
             /* Spacing (Mobile First) */
             --space-xs: 6px;
@@ -76,12 +84,17 @@
             --space-md: 16px;
             --space-lg: 24px;
             --space-xl: 32px;
+            --space-2xl: 48px;
+            --space-3xl: 64px;
+            --space-4xl: 80px;
+            --space-5xl: 96px;
 
             /* Animation */
             --transition-fast: 150ms;
             --transition-normal: 300ms;
             --transition-slow: 500ms;
             --ease-out: cubic-bezier(0, 0, 0.2, 1);
+            --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
             --ease-bounce: cubic-bezier(0.68, -0.6, 0.32, 1.6);
 
             /* Border Radius */
@@ -89,6 +102,10 @@
             --radius-md: 12px;
             --radius-lg: 16px;
             --radius-xl: 20px;
+            --radius-2xl: 24px;
+            --radius-3xl: 28px;
+            --radius-4xl: 32px;
+            --radius-5xl: 36px;
         }
 
         /* ============================================
@@ -132,15 +149,27 @@
             padding: var(--space-lg);
         }
 
+        .splash-content {
+            text-align: center;
+            max-width: 320px;
+        }
+
         #splash-screen h1 {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 3.5rem;
             color: var(--color-gold);
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            margin-bottom: var(--space-xl);
-            text-align: center;
+            margin-bottom: var(--space-sm);
             line-height: 1.1;
             letter-spacing: 1px;
+        }
+
+        #splash-screen .subtitle {
+            font-size: 1.2rem;
+            color: var(--color-gold-light);
+            margin-bottom: var(--space-xl);
+            opacity: 0.9;
+            font-weight: 500;
         }
 
         .loader {
@@ -150,6 +179,14 @@
             border-top: 6px solid var(--color-gold);
             border-radius: 50%;
             animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        .loading-text {
+            margin-top: var(--space-sm);
+            color: var(--color-white);
+            font-size: 1.2rem;
+            opacity: 0.8;
         }
 
         /* ============================================
@@ -166,6 +203,18 @@
             z-index: 100;
             padding: var(--space-md);
             gap: var(--space-md);
+            background: linear-gradient(135deg,
+                    rgba(220, 38, 38, 0.9),
+                    rgba(255, 255, 255, 0.9));
+        }
+
+        .menu-content {
+            max-width: 320px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-md);
         }
 
         #main-menu h1 {
@@ -173,43 +222,52 @@
             font-size: 3rem;
             color: var(--color-gold);
             text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
-            margin-bottom: var(--space-sm);
+            margin-bottom: var(--space-xs);
             text-align: center;
             line-height: 1.1;
             padding: 0 var(--space-sm);
         }
 
+        .menu-subtitle {
+            color: var(--color-text-dark);
+            font-size: 1rem;
+            text-align: center;
+            margin-bottom: var(--space-lg);
+            padding: 0 var(--space-md);
+            line-height: 1.5;
+        }
+
         /* Difficulty Selector Mobile */
         #difficulty-selector {
             width: 100%;
-            max-width: 320px;
             background: var(--color-glass);
-            border-radius: var(--radius-lg);
-            padding: var(--space-sm);
+            border-radius: var(--radius-xl);
+            padding: var(--space-md);
             margin-bottom: var(--space-sm);
             backdrop-filter: blur(10px);
             border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: var(--shadow-lg);
         }
 
         #difficulty-selector h3 {
             color: var(--color-text-dark);
-            margin-bottom: var(--space-xs);
+            margin-bottom: var(--space-sm);
             text-align: center;
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 600;
         }
 
         .difficulty-options {
             display: flex;
             gap: var(--space-xs);
-            margin-bottom: var(--space-xs);
+            margin-bottom: var(--space-sm);
         }
 
         .difficulty-btn {
             flex: 1;
             padding: var(--space-sm);
             border: none;
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-lg);
             font-family: 'Poppins', sans-serif;
             font-size: 0.9rem;
             font-weight: 600;
@@ -218,6 +276,16 @@
             background: rgba(255, 255, 255, 0.2);
             color: var(--color-text-dark);
             min-height: 48px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        .difficulty-btn .difficulty-icon {
+            font-size: 1.2rem;
+            margin-bottom: 2px;
         }
 
         .difficulty-btn.active {
@@ -226,80 +294,76 @@
                     var(--color-gold-dark));
             color: var(--color-white);
             box-shadow: var(--shadow-md);
+            transform: scale(1.02);
         }
 
         .difficulty-btn:active {
-            transform: scale(0.95);
+            transform: scale(0.98);
         }
 
         #difficulty-info {
-            background: rgba(0, 0, 0, 0.8);
-            padding: var(--space-xs);
-            border-radius: var(--radius-md);
-            margin-top: var(--space-xs);
+            background: var(--color-bg-light);
+            padding: var(--space-sm);
+            border-radius: var(--radius-lg);
+            margin-top: var(--space-sm);
+            text-align: center;
         }
 
         #difficulty-info p {
             color: var(--color-text-dark);
-            font-size: 0.8rem;
-            text-align: center;
+            font-size: 0.85rem;
             line-height: 1.4;
-        }
-
-        .difficulty-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            margin-left: 4px;
-        }
-
-        .difficulty-badge.easy {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-        }
-
-        .difficulty-badge.medium {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: white;
-        }
-
-        .difficulty-badge.hard {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
+            margin: 0;
         }
 
         /* Menu Buttons Mobile */
         .menu-button {
             width: 100%;
-            max-width: 320px;
             height: 70px;
             margin: var(--space-xs) 0;
             background: linear-gradient(135deg,
                     var(--color-gold),
                     var(--color-gold-dark));
             border: none;
-            border-radius: var(--radius-lg);
+            border-radius: var(--radius-xl);
             color: var(--color-white);
             font-family: 'Poppins', sans-serif;
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
             box-shadow: var(--shadow-lg);
-            transition: transform var(--transition-fast) var(--ease-out),
-                box-shadow var(--transition-fast) var(--ease-out);
+            transition: all var(--transition-fast) var(--ease-out);
             position: relative;
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 12px;
+            padding: 0 var(--space-lg);
+        }
+
+        .menu-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .menu-button:hover::before {
+            left: 100%;
         }
 
         .menu-button:active {
-            transform: scale(0.95);
+            transform: scale(0.98);
             box-shadow: var(--shadow-md);
+        }
+
+        .menu-button .button-icon {
+            font-size: 1.4rem;
         }
 
         /* ============================================
@@ -327,7 +391,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 var(--space-sm);
+            padding: 0 var(--space-md);
             box-shadow: var(--shadow-lg);
             position: relative;
             z-index: 60;
@@ -338,15 +402,15 @@
         .hud-right {
             display: flex;
             align-items: center;
-            gap: var(--space-xs);
+            gap: var(--space-sm);
         }
 
-        #info-toggle {
-            width: 40px;
-            height: 40px;
+        .hud-btn {
+            width: 44px;
+            height: 44px;
             background: rgba(255, 255, 255, 0.2);
             border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-lg);
             color: var(--color-white);
             font-size: 1.2rem;
             cursor: pointer;
@@ -356,19 +420,26 @@
             transition: all var(--transition-fast) var(--ease-out);
         }
 
-        #info-toggle:active {
+        .hud-btn:active {
             transform: scale(0.9);
             background: rgba(255, 255, 255, 0.3);
         }
 
         #difficulty-indicator {
             background: rgba(255, 255, 255, 0.2);
-            padding: 4px 10px;
+            padding: 6px 12px;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: var(--color-white);
             white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .difficulty-icon-small {
+            font-size: 1rem;
         }
 
         #timer-circle {
@@ -395,7 +466,7 @@
 
         #lives-display {
             display: flex;
-            gap: 2px;
+            gap: 4px;
         }
 
         .heart {
@@ -404,6 +475,7 @@
             height: 24px;
             font-size: 24px;
             line-height: 1;
+            transition: transform var(--transition-fast) var(--ease-out);
         }
 
         .heart.filled {
@@ -423,13 +495,14 @@
             width: 180px;
             background: var(--color-glass);
             backdrop-filter: blur(10px);
-            border-radius: 0 0 0 var(--radius-lg);
-            padding: var(--space-sm);
+            border-radius: 0 0 0 var(--radius-xl);
+            padding: var(--space-md);
             box-shadow: var(--shadow-lg);
             transform: translateX(100%);
             transition: transform var(--transition-normal) var(--ease-out);
             z-index: 55;
             -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         #info-panel.is-visible {
@@ -440,7 +513,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 0;
+            padding: 10px 0;
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         }
 
@@ -451,13 +524,60 @@
         .info-label {
             font-size: 0.85rem;
             color: var(--color-text-medium);
-            font-weight: 600;
+            font-weight: 500;
         }
 
         .info-value {
             font-size: 1.2rem;
             font-weight: 700;
             color: var(--color-gold);
+        }
+
+        /* Hint Button */
+        #hint-btn {
+            position: absolute;
+            bottom: var(--space-lg);
+            right: var(--space-lg);
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--color-gold), var(--color-gold-dark));
+            border: none;
+            border-radius: 50%;
+            color: var(--color-white);
+            font-size: 1.8rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-xl);
+            z-index: 40;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast) var(--ease-out);
+        }
+
+        #hint-btn:active {
+            transform: scale(0.9);
+            box-shadow: var(--shadow-lg);
+        }
+
+        #hint-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #hint-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--color-error);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 600;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* ============================================
@@ -467,13 +587,13 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: var(--space-sm);
-            gap: var(--space-md);
+            padding: var(--space-md);
+            gap: var(--space-lg);
             position: relative;
             z-index: 55;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            padding-bottom: 20px;
+            padding-bottom: 90px; /* Ruang untuk hint button */
         }
 
         /* Hero Section Mobile */
@@ -481,30 +601,59 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: var(--space-sm);
-            margin-top: var(--space-sm);
+            gap: var(--space-md);
+            margin-top: var(--space-md);
+        }
+
+        .hero-frame {
+            position: relative;
+            width: 90%;
+            max-width: 280px;
+            border-radius: var(--radius-2xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-xl);
+            background: var(--color-white);
+            border: 4px solid var(--color-gold);
         }
 
         #hero-portrait {
-            width: 90%;
-            max-width: 280px;
+            width: 100%;
             height: auto;
             aspect-ratio: 4/5;
             object-fit: cover;
-            border: 3px solid var(--color-gold);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-xl);
-            background: var(--color-white);
+            display: block;
+        }
+
+        .hero-info-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--color-overlay);
+            color: white;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all var(--transition-fast) var(--ease-out);
+        }
+
+        .hero-info-badge:active {
+            transform: scale(0.95);
         }
 
         /* Drop Zone Mobile */
         #drop-zone {
             width: 90%;
             max-width: 320px;
-            height: 100px;
-            padding: var(--space-sm) 0;
+            min-height: 100px;
+            padding: var(--space-md);
             border: 3px dashed var(--color-gold);
-            border-radius: var(--radius-lg);
+            border-radius: var(--radius-xl);
             background: rgba(255, 255, 255, 0.4);
             backdrop-filter: blur(5px);
             display: flex;
@@ -516,7 +665,7 @@
             transition: all var(--transition-normal) var(--ease-out);
             margin: 0 auto;
             text-align: center;
-            padding: var(--space-sm);
+            -webkit-backdrop-filter: blur(5px);
         }
 
         #drop-zone.highlight-correct {
@@ -540,6 +689,23 @@
             font-size: 1.2rem;
             font-weight: 700;
             color: var(--color-text-dark);
+            min-height: 120px;
+        }
+
+        /* Hint Indicator */
+        .hint-indicator {
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--color-gold);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            box-shadow: var(--shadow-sm);
+            white-space: nowrap;
         }
 
         /* Name Cards Section Mobile (CENTERED) */
@@ -548,19 +714,19 @@
             max-width: 320px;
             display: flex;
             flex-direction: column;
-            align-items: center; /* PUSATKAN */
+            align-items: center;
             gap: var(--space-sm);
             padding-bottom: var(--space-md);
-            margin: 0 auto; /* PUSATKAN */
+            margin: 0 auto;
         }
 
         .name-card {
-            width: 95%; /* LEBIH LEBAR UNTUK MOBILE */
+            width: 95%;
             max-width: 300px;
             height: 80px;
             background: var(--color-white);
             border: 3px solid var(--color-gold);
-            border-radius: var(--radius-lg);
+            border-radius: var(--radius-xl);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -569,12 +735,12 @@
             color: var(--color-text-dark);
             cursor: grab;
             box-shadow: var(--shadow-md);
-            transition: transform var(--transition-fast) var(--ease-out),
-                box-shadow var(--transition-fast) var(--ease-out);
+            transition: all var(--transition-fast) var(--ease-out);
             touch-action: none;
             position: relative;
             text-align: center;
             padding: var(--space-sm);
+            user-select: none;
         }
 
         .name-card:active {
@@ -587,6 +753,17 @@
             z-index: 1000;
             opacity: 0.95;
             border-color: var(--color-gold-dark);
+        }
+
+        .name-card.correct-hint {
+            border-color: var(--color-success);
+            background: var(--color-success-light);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .name-card.wrong-hint {
+            opacity: 0.5;
+            filter: grayscale(0.5);
         }
 
         /* ============================================
@@ -613,8 +790,8 @@
 
         .modal {
             background: var(--color-white);
-            border-radius: var(--radius-xl);
-            padding: var(--space-md);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-lg);
             max-width: 400px;
             width: 100%;
             box-shadow: var(--shadow-xl);
@@ -626,6 +803,10 @@
             flex-direction: column;
         }
 
+        .modal-header {
+            margin-bottom: var(--space-md);
+        }
+
         .modal h2 {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 2.2rem;
@@ -633,6 +814,13 @@
             color: var(--color-text-dark);
             letter-spacing: 1px;
             line-height: 1.2;
+        }
+
+        .modal-subtitle {
+            color: var(--color-text-medium);
+            font-size: 1rem;
+            margin-bottom: var(--space-lg);
+            line-height: 1.5;
         }
 
         .modal p {
@@ -655,14 +843,14 @@
             top: 0;
             background: var(--color-white);
             z-index: 100;
-            padding: var(--space-md);
+            padding: var(--space-lg);
             border-bottom: 2px solid var(--color-gold);
         }
 
         .modal.scrollable .modal-body {
             flex: 1;
             overflow-y: auto;
-            padding: var(--space-md);
+            padding: var(--space-lg);
             -webkit-overflow-scrolling: touch;
         }
 
@@ -671,7 +859,7 @@
             bottom: 0;
             background: var(--color-white);
             z-index: 100;
-            padding: var(--space-md);
+            padding: var(--space-lg);
             border-top: 1px solid rgba(0, 0, 0, 0.1);
         }
 
@@ -681,7 +869,7 @@
             flex-direction: column;
             gap: var(--space-sm);
             width: 100%;
-            margin-top: var(--space-md);
+            margin-top: var(--space-lg);
         }
 
         .modal-button {
@@ -699,17 +887,33 @@
             font-weight: 600;
             cursor: pointer;
             box-shadow: var(--shadow-md);
-            transition: transform var(--transition-fast) var(--ease-out),
-                box-shadow var(--transition-fast) var(--ease-out);
+            transition: all var(--transition-fast) var(--ease-out);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 12px;
             padding: var(--space-sm);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .modal-button:hover::before {
+            left: 100%;
         }
 
         .modal-button:active {
-            transform: scale(0.95);
+            transform: scale(0.98);
             box-shadow: var(--shadow-sm);
         }
 
@@ -719,151 +923,226 @@
                     var(--color-text-dark));
         }
 
+        .modal-button .button-icon {
+            font-size: 1.4rem;
+        }
+
         /* ============================================
-         * SHARE MODAL MOBILE OPTIMIZED
+         * HERO INFO MODAL (EDUCATION CONTENT)
          * ============================================ */
-        #share-buttons {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 2 GRID UNTUK MOBILE */
-            gap: var(--space-sm);
+        .hero-info-content {
+            text-align: left;
             margin: var(--space-md) 0;
         }
 
-        .share-button {
+        .hero-info-section {
+            margin-bottom: var(--space-lg);
+        }
+
+        .hero-info-section h3 {
+            color: var(--color-primary);
+            font-size: 1.1rem;
+            margin-bottom: var(--space-sm);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hero-info-section h3 .section-icon {
+            font-size: 1.2rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+
+        .info-item-grid {
+            background: var(--color-bg-light);
+            padding: var(--space-sm);
+            border-radius: var(--radius-md);
+            text-align: center;
+        }
+
+        .info-label-grid {
+            font-size: 0.8rem;
+            color: var(--color-text-medium);
+            margin-bottom: 4px;
+        }
+
+        .info-value-grid {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--color-text-dark);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 20px;
+            margin-left: 10px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--color-gold);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: var(--space-md);
+            padding-left: var(--space-md);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -7px;
+            top: 6px;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            border: 2px solid var(--color-white);
+            box-shadow: 0 0 0 2px var(--color-primary);
+        }
+
+        .timeline-year {
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-bottom: 4px;
+        }
+
+        .timeline-event {
+            color: var(--color-text-dark);
+            font-size: 0.9rem;
+        }
+
+        .quote-container {
+            background: linear-gradient(135deg, var(--color-gold-light), var(--color-white));
+            border-left: 4px solid var(--color-gold);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            margin: var(--space-md) 0;
+            text-align: center;
+        }
+
+        .quote-text {
+            font-style: italic;
+            color: var(--color-text-dark);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: var(--space-sm);
+        }
+
+        .quote-author {
+            color: var(--color-text-medium);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* ============================================
+         * HINT MODAL
+         * ============================================ */
+        .hint-options {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+            margin: var(--space-lg) 0;
+        }
+
+        .hint-option {
+            background: var(--color-bg-light);
+            border: 2px solid transparent;
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            cursor: pointer;
+            transition: all var(--transition-fast) var(--ease-out);
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .hint-option:active {
+            transform: scale(0.98);
+            background: var(--color-gold-light);
+            border-color: var(--color-gold);
+        }
+
+        .hint-option.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .hint-option.disabled:active {
+            transform: none;
+        }
+
+        .hint-icon {
+            font-size: 1.5rem;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .hint-text {
+            flex: 1;
+        }
+
+        .hint-title {
+            font-weight: 600;
+            color: var(--color-text-dark);
+            margin-bottom: 2px;
+        }
+
+        .hint-desc {
+            font-size: 0.85rem;
+            color: var(--color-text-medium);
+        }
+
+        .hint-cost {
+            background: var(--color-gold);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        /* ============================================
+         * LOADING STATES
+         * ============================================ */
+        .loading-state {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: var(--space-sm);
-            min-height: 90px;
-            border-radius: var(--radius-md);
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform var(--transition-fast) var(--ease-out);
-            border: none;
-            color: var(--color-white);
+            padding: var(--space-2xl);
             text-align: center;
         }
 
-        .share-button span {
-            font-size: 1.8rem;
-            margin-bottom: 6px;
-        }
-
-        .share-button:active {
-            transform: scale(0.95);
-        }
-
-        /* Platform Colors */
-        .share-button[data-platform="whatsapp"] {
-            background: linear-gradient(135deg, #25D366, #128C7E);
-        }
-
-        .share-button[data-platform="facebook"] {
-            background: linear-gradient(135deg, #1877F2, #0A5BC4);
-        }
-
-        .share-button[data-platform="twitter"] {
-            background: linear-gradient(135deg, #1DA1F2, #0D8BD9);
-        }
-
-        .share-button[data-platform="copy"] {
-            background: linear-gradient(135deg, #6B7280, #4B5563);
-        }
-
-        /* Settings Modal Mobile */
-        .slider-container {
-            margin: var(--space-md) 0;
-            text-align: left;
-        }
-
-        .slider-label {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--color-text-dark);
-            margin-bottom: var(--space-xs);
-            display: block;
-        }
-
-        .slider {
-            width: 100%;
-            height: 40px;
-            -webkit-appearance: none;
-            appearance: none;
-            background: var(--color-bg-light);
-            border-radius: 20px;
-            outline: none;
-        }
-
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 44px;
-            height: 44px;
-            background: linear-gradient(135deg,
-                    var(--color-gold),
-                    var(--color-gold-dark));
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--color-bg-light);
+            border-top: 4px solid var(--color-gold);
             border-radius: 50%;
-            cursor: pointer;
-            box-shadow: var(--shadow-md);
-            transition: transform var(--transition-fast) var(--ease-out);
+            animation: spin 1s linear infinite;
+            margin-bottom: var(--space-md);
         }
 
-        /* Player Name Modal Mobile */
-        #player-name-input {
-            width: 100%;
-            padding: var(--space-sm);
-            font-size: 1rem;
-            border: 2px solid var(--color-gold);
-            border-radius: var(--radius-md);
-            margin: var(--space-xs) 0;
-            text-align: center;
-            font-family: 'Poppins', sans-serif;
-            transition: all var(--transition-fast) var(--ease-out);
-            background: var(--color-white);
-            color: var(--color-text-dark);
-        }
-
-        .name-input-container {
-            position: relative;
-            margin: var(--space-xs) 0;
-        }
-
-        .char-counter {
-            text-align: right;
-            font-size: 0.85rem;
+        .loading-message {
             color: var(--color-text-medium);
-            margin-top: 5px;
-        }
-
-        /* Leaderboard Mobile */
-        #leaderboard {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-top: var(--space-md);
-            text-align: left;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .leaderboard-entry {
-            padding: var(--space-sm);
-            margin: var(--space-xs) 0;
-            background: var(--color-bg-light);
-            border-radius: var(--radius-md);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.9rem;
-        }
-
-        .leaderboard-rank {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--color-gold);
-            margin-right: var(--space-sm);
-            min-width: 35px;
+            font-size: 0.95rem;
+            margin-top: var(--space-sm);
         }
 
         /* ============================================
@@ -897,7 +1176,7 @@
         }
 
         .shake {
-            animation: shake var(--transition-slow);
+            animation: shake var(--transition-slow) var(--ease-out);
         }
 
         @keyframes bounce {
@@ -907,6 +1186,39 @@
 
         .bounce {
             animation: bounce var(--transition-slow) var(--ease-bounce);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .pulse {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide-in-right {
+            animation: slideInRight 0.3s var(--ease-out);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .float {
+            animation: float 2s ease-in-out infinite;
         }
 
         /* Particle Effect Mobile */
@@ -919,6 +1231,7 @@
             pointer-events: none;
             animation: particle-float 1s ease-out forwards;
             box-shadow: 0 0 8px var(--color-gold);
+            z-index: 1000;
         }
 
         @keyframes particle-float {
@@ -932,12 +1245,37 @@
             }
         }
 
+        /* Confetti Effect */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 20px;
+            opacity: 0;
+            animation: confetti-fall 2s ease-out forwards;
+            z-index: 999;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                opacity: 1;
+                transform: translateY(-100px) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(720deg);
+            }
+        }
+
         /* ============================================
          * RESPONSIVE BREAKPOINTS (Tablet & Desktop)
          * ============================================ */
         @media (min-width: 768px) {
             html {
                 font-size: 16px;
+            }
+            
+            #splash-screen h1 {
+                font-size: 4rem;
             }
             
             #main-menu h1 {
@@ -961,25 +1299,33 @@
             
             #drop-zone {
                 max-width: 400px;
-                height: 120px;
+                min-height: 120px;
+                font-size: 1.1rem;
             }
             
-            #hero-portrait {
+            .hero-frame {
                 max-width: 320px;
             }
             
             .modal {
                 max-width: 500px;
+                padding: var(--space-xl);
+            }
+            
+            .modal h2 {
+                font-size: 2.5rem;
             }
         }
 
         @media (min-width: 1024px) {
-            #share-buttons {
-                grid-template-columns: repeat(4, 1fr);
+            #hint-btn {
+                width: 70px;
+                height: 70px;
+                font-size: 2rem;
             }
             
-            .share-button {
-                min-height: 100px;
+            #info-panel {
+                width: 200px;
             }
         }
 
@@ -989,19 +1335,22 @@
                 flex-direction: row;
                 flex-wrap: wrap;
                 justify-content: center;
-                align-items: center;
+                align-items: flex-start;
                 gap: var(--space-sm);
                 padding: var(--space-xs);
+                padding-bottom: 70px;
             }
             
             #hero-section {
                 flex: 0 0 40%;
                 margin-top: 0;
+                order: 1;
             }
             
             #drop-zone {
                 flex: 0 0 40%;
-                height: 80px;
+                min-height: 80px;
+                order: 2;
             }
             
             #name-cards-section {
@@ -1010,6 +1359,7 @@
                 flex-direction: row;
                 flex-wrap: wrap;
                 justify-content: center;
+                order: 3;
             }
             
             .name-card {
@@ -1018,8 +1368,16 @@
                 font-size: 1rem;
             }
             
-            #hero-portrait {
+            .hero-frame {
                 max-width: 200px;
+            }
+            
+            #hint-btn {
+                bottom: var(--space-sm);
+                right: var(--space-sm);
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
             }
         }
 
@@ -1032,6 +1390,11 @@
                 animation-iteration-count: 1 !important;
                 transition-duration: 0.01ms !important;
             }
+            
+            .modal-button::before,
+            .menu-button::before {
+                display: none;
+            }
         }
 
         /* Dark Mode Support */
@@ -1040,12 +1403,16 @@
                 --color-white: #1f2937;
                 --color-text-dark: #f3f4f6;
                 --color-text-medium: #d1d5db;
+                --color-text-light: #9ca3af;
                 --color-bg-light: #374151;
+                --color-bg-dark: #111827;
                 --color-glass: rgba(31, 41, 55, 0.95);
+                --color-overlay: rgba(0, 0, 0, 0.8);
             }
             
             .modal {
                 background: var(--color-white);
+                color: var(--color-text-dark);
             }
             
             .name-card {
@@ -1058,38 +1425,18 @@
                 color: var(--color-text-dark);
                 border-color: var(--color-gold);
             }
-        }
-        
-        /* Screenshot Preview Styling */
-        #screenshot-preview {
-            margin-top: var(--space-md);
-            text-align: center;
-        }
-        
-        .screenshot-canvas {
-            width: 100%;
-            max-width: 300px;
-            border-radius: var(--radius-md);
-            border: 3px solid var(--color-gold);
-            box-shadow: var(--shadow-lg);
-            margin: var(--space-sm) auto;
-        }
-        
-        .download-btn {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            border: none;
-            padding: var(--space-sm) var(--space-md);
-            border-radius: var(--radius-md);
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: var(--space-sm);
-            transition: transform var(--transition-fast) var(--ease-out);
-        }
-        
-        .download-btn:active {
-            transform: scale(0.95);
+            
+            .info-item-grid {
+                background: #4b5563;
+            }
+            
+            .hint-option {
+                background: #4b5563;
+            }
+            
+            .quote-container {
+                background: linear-gradient(135deg, #4b5563, #374151);
+            }
         }
         
         /* Loading Indicator */
@@ -1104,6 +1451,23 @@
             margin-right: 8px;
             vertical-align: middle;
         }
+        
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--color-bg-light);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: var(--space-sm) 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-gold), var(--color-gold-dark));
+            border-radius: 4px;
+            transition: width 0.3s var(--ease-out);
+        }
     </style>
 </head>
 
@@ -1114,39 +1478,55 @@
 
         <!-- Splash Screen -->
         <div id="splash-screen">
-            <h1>Pahlawan<br />Puzzle</h1>
-            <div class="loader"></div>
+            <div class="splash-content">
+                <h1>PATRION</h1>
+                <p class="subtitle">Tebak Pahlawan Indonesia</p>
+                <div class="loader"></div>
+                <p class="loading-text">Memuat game edukasi...</p>
+            </div>
         </div>
 
         <!-- Main Menu -->
         <div id="main-menu">
-            <h1>Pahlawan<br />Puzzle</h1>
+            <div class="menu-content">
+                <h1>PATRION</h1>
+                <p class="menu-subtitle">Game edukasi tebak pahlawan Indonesia. Belajar sejarah sambil bermain!</p>
 
-            <!-- Difficulty Selector -->
-            <div id="difficulty-selector">
-                <h3>Tingkat Kesulitan:</h3>
-                <div class="difficulty-options">
-                    <button class="difficulty-btn" data-difficulty="easy">Mudah</button>
-                    <button class="difficulty-btn active" data-difficulty="medium">Sedang</button>
-                    <button class="difficulty-btn" data-difficulty="hard">Sulit</button>
+                <!-- Difficulty Selector -->
+                <div id="difficulty-selector">
+                    <h3>🎚️ Pilih Tingkat Kesulitan</h3>
+                    <div class="difficulty-options">
+                        <button class="difficulty-btn" data-difficulty="easy">
+                            <span class="difficulty-icon">🌱</span>
+                            Mudah
+                        </button>
+                        <button class="difficulty-btn active" data-difficulty="medium">
+                            <span class="difficulty-icon">⚡</span>
+                            Sedang
+                        </button>
+                        <button class="difficulty-btn" data-difficulty="hard">
+                            <span class="difficulty-icon">🔥</span>
+                            Sulit
+                        </button>
+                    </div>
+                    <div id="difficulty-info">
+                        <p><strong>Sedang:</strong> 60 detik/level, 3 nyawa, ×1.5 skor</p>
+                    </div>
                 </div>
-                <div id="difficulty-info">
-                    <p><strong>Sedang:</strong> 60 detik/level, 3 nyawa, ×1.5 skor</p>
-                </div>
+
+                <button class="menu-button" id="btn-start">
+                    <span class="button-icon">🎮</span> Mulai Game
+                </button>
+                <button class="menu-button" id="btn-settings">
+                    <span class="button-icon">⚙️</span> Pengaturan
+                </button>
+                <button class="menu-button" id="btn-profile">
+                    <span class="button-icon">👤</span> Profile
+                </button>
+                <button class="menu-button" id="btn-exit">
+                    <span class="button-icon">🚪</span> Keluar Game
+                </button>
             </div>
-
-            <button class="menu-button" id="btn-start">
-                <span>🎮</span> Mulai Game
-            </button>
-            <button class="menu-button" id="btn-settings">
-                <span>⚙️</span> Pengaturan
-            </button>
-            <button class="menu-button" id="btn-profile">
-                <span>👤</span> Profile
-            </button>
-            <button class="menu-button" id="btn-exit">
-                <span>🚪</span> Keluar Game
-            </button>
         </div>
 
         <!-- Game Screen -->
@@ -1154,8 +1534,11 @@
             <!-- Mobile HUD -->
             <div id="hud">
                 <div class="hud-left">
-                    <button id="info-toggle" aria-label="Toggle Info">ℹ️</button>
-                    <div id="difficulty-indicator">Sedang</div>
+                    <button id="info-toggle" class="hud-btn" aria-label="Toggle Info">ℹ️</button>
+                    <div id="difficulty-indicator">
+                        <span class="difficulty-icon-small">⚡</span>
+                        <span>Sedang</span>
+                    </div>
                 </div>
                 <div class="hud-right">
                     <div id="timer-circle">
@@ -1185,20 +1568,102 @@
                     <span class="info-label">Kesulitan</span>
                     <span class="info-value" id="difficulty-value">Sedang</span>
                 </div>
+                <div class="info-item">
+                    <span class="info-label">Hint Tersisa</span>
+                    <span class="info-value" id="hint-count-display">3</span>
+                </div>
             </div>
+
+            <!-- Hint Button -->
+            <button id="hint-btn" title="Dapatkan petunjuk">
+                💡
+                <div id="hint-count">3</div>
+            </button>
 
             <!-- Game Area Mobile Layout -->
             <div id="game-area">
                 <!-- Hero Portrait (Top) -->
                 <div id="hero-section">
-                    <img id="hero-portrait" alt="Hero" />
+                    <div class="hero-frame">
+                        <img id="hero-portrait" alt="Pahlawan" />
+                        <div class="hero-info-badge" id="hero-info-btn" title="Lihat informasi pahlawan">
+                            ℹ️ Info
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Drop Zone (Middle) -->
-                <div id="drop-zone">Seret nama di sini</div>
+                <div id="drop-zone">Seret nama pahlawan ke sini</div>
 
                 <!-- Name Cards (Bottom - CENTERED) -->
                 <div id="name-cards-section"></div>
+            </div>
+        </div>
+
+        <!-- Hero Info Modal -->
+        <div id="hero-info-modal" class="modal-overlay">
+            <div class="modal scrollable">
+                <div class="modal-header">
+                    <h2 id="hero-info-title">Nama Pahlawan</h2>
+                    <p class="modal-subtitle" id="hero-info-subtitle">Proklamator Kemerdekaan Indonesia</p>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="hero-info-content">
+                        <!-- Informasi akan diisi oleh JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <div class="button-group-vertical">
+                        <button class="modal-button" id="btn-close-hero-info">
+                            <span class="button-icon">←</span> Kembali ke Game
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hint Modal -->
+        <div id="hint-modal" class="modal-overlay">
+            <div class="modal">
+                <h2>💡 Dapatkan Petunjuk</h2>
+                <p class="modal-subtitle">Gunakan hint tersisa: <strong id="available-hints">3</strong></p>
+                
+                <div class="hint-options">
+                    <div class="hint-option" data-hint="reveal_first_letter">
+                        <div class="hint-icon">🔤</div>
+                        <div class="hint-text">
+                            <div class="hint-title">Tampilkan Huruf Pertama</div>
+                            <div class="hint-desc">Tampilkan huruf pertama nama pahlawan</div>
+                        </div>
+                        <div class="hint-cost">1</div>
+                    </div>
+                    
+                    <div class="hint-option" data-hint="remove_wrong">
+                        <div class="hint-icon">❌</div>
+                        <div class="hint-text">
+                            <div class="hint-title">Hilangkan 1 Jawaban Salah</div>
+                            <div class="hint-desc">Hilangkan satu jawaban yang salah</div>
+                        </div>
+                        <div class="hint-cost">2</div>
+                    </div>
+                    
+                    <div class="hint-option" data-hint="highlight_correct">
+                        <div class="hint-icon">✨</div>
+                        <div class="hint-text">
+                            <div class="hint-title">Sorot Jawaban Benar</div>
+                            <div class="hint-desc">Sorot jawaban yang benar (dalam 3 detik)</div>
+                        </div>
+                        <div class="hint-cost">3</div>
+                    </div>
+                </div>
+                
+                <div class="button-group-vertical">
+                    <button class="modal-button secondary" id="btn-close-hint">
+                        <span class="button-icon">←</span> Batal
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -1206,17 +1671,43 @@
         <div id="settings-modal" class="modal-overlay">
             <div class="modal">
                 <h2>⚙️ Pengaturan</h2>
+                
                 <div class="slider-container">
-                    <label class="slider-label">Volume SFX</label>
+                    <label class="slider-label">
+                        <span>🔊</span> Volume SFX
+                        <span id="sfx-value" style="float: right; color: var(--color-gold);">70%</span>
+                    </label>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="sfx-progress" style="width: 70%"></div>
+                    </div>
                     <input type="range" class="slider" id="sfx-slider" min="0" max="100" value="70" />
                 </div>
+                
                 <div class="slider-container">
-                    <label class="slider-label">Volume BGM</label>
+                    <label class="slider-label">
+                        <span>🎵</span> Volume BGM
+                        <span id="bgm-value" style="float: right; color: var(--color-gold);">50%</span>
+                    </label>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="bgm-progress" style="width: 50%"></div>
+                    </div>
                     <input type="range" class="slider" id="bgm-slider" min="0" max="100" value="50" />
                 </div>
+                
+                <div class="slider-container">
+                    <label class="slider-label">
+                        <span>💡</span> Jumlah Hint Awal
+                        <span id="hints-value" style="float: right; color: var(--color-gold);">3</span>
+                    </label>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="hints-progress" style="width: 60%"></div>
+                    </div>
+                    <input type="range" class="slider" id="hints-slider" min="1" max="5" value="3" />
+                </div>
+                
                 <div class="button-group-vertical">
                     <button class="modal-button" id="btn-close-settings">
-                        <span>✅</span> Simpan & Tutup
+                        <span class="button-icon">✅</span> Simpan & Tutup
                     </button>
                 </div>
             </div>
@@ -1224,16 +1715,46 @@
 
         <!-- Profile Modal -->
         <div id="profile-modal" class="modal-overlay">
-            <div class="modal">
-                <h2>👤 Profile</h2>
-                <p>Nama: <strong id="player-name-display">Player</strong></p>
-                <p>Skor Anda: <strong id="player-score">0</strong></p>
-                <p>Skor Tertinggi: <strong id="player-high-score">0</strong></p>
-                <div id="leaderboard"></div>
-                <div class="button-group-vertical">
-                    <button class="modal-button" id="btn-close-profile">
-                        <span>←</span> Kembali
-                    </button>
+            <div class="modal scrollable">
+                <div class="modal-header">
+                    <h2>👤 Profile</h2>
+                    <p class="modal-subtitle">Statistik permainan Anda</p>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="info-grid">
+                        <div class="info-item-grid">
+                            <div class="info-label-grid">Nama</div>
+                            <div class="info-value-grid" id="player-name-display">Player</div>
+                        </div>
+                        <div class="info-item-grid">
+                            <div class="info-label-grid">Level</div>
+                            <div class="info-value-grid" id="player-level">1</div>
+                        </div>
+                        <div class="info-item-grid">
+                            <div class="info-label-grid">Skor</div>
+                            <div class="info-value-grid" id="player-score">0</div>
+                        </div>
+                        <div class="info-item-grid">
+                            <div class="info-label-grid">Skor Tertinggi</div>
+                            <div class="info-value-grid" id="player-high-score">0</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: var(--space-xl);">
+                        <h3 style="color: var(--color-primary); margin-bottom: var(--space-md);">
+                            <span>🏆</span> Leaderboard
+                        </h3>
+                        <div id="leaderboard"></div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <div class="button-group-vertical">
+                        <button class="modal-button" id="btn-close-profile">
+                            <span class="button-icon">←</span> Kembali
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1242,13 +1763,14 @@
         <div id="exit-modal" class="modal-overlay">
             <div class="modal">
                 <h2>🚪 Keluar Game</h2>
-                <p>Apakah kamu yakin ingin keluar dari permainan ini?</p>
+                <p class="modal-subtitle">Apakah kamu yakin ingin keluar dari permainan ini?</p>
+                
                 <div class="button-group-vertical">
                     <button class="modal-button" id="btn-confirm-exit">
-                        <span>✅</span> Iya, Keluar
+                        <span class="button-icon">✅</span> Iya, Keluar
                     </button>
                     <button class="modal-button secondary" id="btn-cancel-exit">
-                        <span>❌</span> Tidak
+                        <span class="button-icon">❌</span> Tidak, Lanjut Main
                     </button>
                 </div>
             </div>
@@ -1258,9 +1780,7 @@
         <div id="name-modal" class="modal-overlay">
             <div class="modal">
                 <h2>🎮 Masukkan Nama</h2>
-                <p style="color: var(--color-text-medium); margin-bottom: var(--space-sm);">
-                    Masukkan nama Anda untuk dicatat di leaderboard
-                </p>
+                <p class="modal-subtitle">Masukkan nama Anda untuk dicatat di leaderboard</p>
 
                 <div class="name-input-container">
                     <input type="text" id="player-name-input" placeholder="Contoh: Budi Santoso" maxlength="20"
@@ -1273,14 +1793,14 @@
 
                 <div class="button-group-vertical">
                     <button class="modal-button secondary" id="btn-random-name">
-                        <span>🎲</span> Nama Acak
+                        <span class="button-icon">🎲</span> Nama Acak
                     </button>
                     <button class="modal-button" id="btn-save-name">
-                        <span>▶️</span> Mulai Game
+                        <span class="button-icon">▶️</span> Mulai Game
                     </button>
                 </div>
 
-                <p style="font-size: 0.85rem; color: var(--color-text-light); margin-top: var(--space-sm);">
+                <p style="font-size: 0.85rem; color: var(--color-text-light); margin-top: var(--space-lg);">
                     <em>Nama akan ditampilkan di leaderboard bersama skor Anda</em>
                 </p>
             </div>
@@ -1290,8 +1810,14 @@
         <div id="correct-modal" class="modal-overlay">
             <div class="modal">
                 <h2 style="color: #10b981">✓ Benar!</h2>
-                <p>Jawaban Anda benar!</p>
-                <p>Skor: <strong id="correct-score">+100</strong></p>
+                <p class="modal-subtitle">Jawaban Anda benar!</p>
+                <div class="info-item-grid" style="max-width: 200px; margin: var(--space-lg) auto;">
+                    <div class="info-label-grid">Skor Bertambah</div>
+                    <div class="info-value-grid" id="correct-score">+150</div>
+                </div>
+                <p style="color: var(--color-text-medium); font-size: 0.9rem;">
+                    Loading level selanjutnya...
+                </p>
             </div>
         </div>
 
@@ -1299,8 +1825,14 @@
         <div id="wrong-modal" class="modal-overlay">
             <div class="modal">
                 <h2 style="color: #ef4444">✗ Salah!</h2>
-                <p>Jawaban Anda salah!</p>
-                <p id="wrong-penalty-text">Nyawa berkurang 1</p>
+                <p class="modal-subtitle" id="wrong-penalty-text">Nyawa berkurang 1</p>
+                <div class="info-item-grid" style="max-width: 200px; margin: var(--space-lg) auto; background: var(--color-error-light);">
+                    <div class="info-label-grid">Nyawa Tersisa</div>
+                    <div class="info-value-grid" id="wrong-lives">2</div>
+                </div>
+                <p style="color: var(--color-text-medium); font-size: 0.9rem;">
+                    Mempersiapkan level yang sama...
+                </p>
             </div>
         </div>
 
@@ -1308,11 +1840,11 @@
         <div id="tryagain-modal" class="modal-overlay">
             <div class="modal">
                 <h2 style="color: #f59e0b">⏰ Waktu Habis!</h2>
-                <p>Waktu Anda telah habis!</p>
+                <p class="modal-subtitle">Waktu Anda telah habis!</p>
                 <p>Nyawa berkurang 1</p>
                 <div class="button-group-vertical">
                     <button class="modal-button" id="btn-try-again">
-                        <span>🔄</span> Coba Lagi
+                        <span class="button-icon">🔄</span> Coba Lagi
                     </button>
                 </div>
             </div>
@@ -1322,14 +1854,17 @@
         <div id="gameover-modal" class="modal-overlay">
             <div class="modal">
                 <h2 style="color: #ef4444">Game Over</h2>
-                <p>Permainan berakhir!</p>
-                <p>Skor Akhir: <strong id="gameover-score">0</strong></p>
+                <p class="modal-subtitle">Permainan berakhir!</p>
+                <div class="info-item-grid" style="max-width: 250px; margin: var(--space-lg) auto;">
+                    <div class="info-label-grid">Skor Akhir</div>
+                    <div class="info-value-grid" id="gameover-score">0</div>
+                </div>
                 <div class="button-group-vertical">
                     <button class="modal-button" id="btn-restart">
-                        <span>🎮</span> Main Lagi
+                        <span class="button-icon">🎮</span> Main Lagi
                     </button>
                     <button class="modal-button secondary" id="btn-menu">
-                        <span>🏠</span> Menu Utama
+                        <span class="button-icon">🏠</span> Menu Utama
                     </button>
                 </div>
             </div>
@@ -1339,86 +1874,18 @@
         <div id="victory-modal" class="modal-overlay">
             <div class="modal">
                 <h2 style="color: #10b981">🎉 Victory!</h2>
-                <p>Selamat! Anda telah menyelesaikan semua level!</p>
-                <p>Skor Total: <strong id="victory-score">0</strong></p>
+                <p class="modal-subtitle">Selamat! Anda telah menyelesaikan semua level!</p>
+                <div class="info-item-grid" style="max-width: 250px; margin: var(--space-lg) auto;">
+                    <div class="info-label-grid">Skor Total</div>
+                    <div class="info-value-grid" id="victory-score">0</div>
+                </div>
                 <div class="button-group-vertical">
                     <button class="modal-button" id="btn-play-again">
-                        <span>🎮</span> Main Lagi
+                        <span class="button-icon">🎮</span> Main Lagi
                     </button>
                     <button class="modal-button secondary" id="btn-menu-victory">
-                        <span>🏠</span> Menu Utama
+                        <span class="button-icon">🏠</span> Menu Utama
                     </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Share Modal dengan Scroll dan 2 Grid -->
-        <div id="share-modal" class="modal-overlay">
-            <div class="modal scrollable">
-                <!-- Sticky Header -->
-                <div class="modal-header">
-                    <div style="text-align: center;">
-                        <div style="font-size: 2.5rem; margin-bottom: var(--space-xs);">🎮</div>
-                        <h2 style="color: var(--color-primary); margin-bottom: var(--space-xs); font-size: 1.5rem;">
-                            Skor Anda: <span id="share-score" style="color: var(--color-gold);">0</span>
-                        </h2>
-                        <p style="color: var(--color-text-medium); font-size: 0.9rem;">
-                            Bagikan prestasi ini!
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Scrollable Content -->
-                <div class="modal-body">
-                    <!-- Quick Share Section - 2 GRID -->
-                    <div style="margin-bottom: var(--space-xl);">
-                        <h3 style="color: var(--color-text-dark); margin-bottom: var(--space-md); 
-                                  text-align: center; font-size: 1.2rem;">
-                            📲 Bagikan Cepat
-                        </h3>
-                        <div id="share-buttons">
-                            <button class="share-button" data-platform="whatsapp" title="WhatsApp">
-                                <span>📱</span>
-                                WhatsApp
-                            </button>
-                            <button class="share-button" data-platform="facebook" title="Facebook">
-                                <span>📘</span>
-                                Facebook
-                            </button>
-                            <button class="share-button" data-platform="twitter" title="Twitter/X">
-                                <span>🐦</span>
-                                Twitter/X
-                            </button>
-                            <button class="share-button" data-platform="copy" title="Salin">
-                                <span>📋</span>
-                                Salin
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Screenshot Section -->
-                    <div style="margin-bottom: var(--space-xl);">
-                        <h3 style="color: var(--color-text-dark); margin-bottom: var(--space-md); 
-                                  text-align: center; font-size: 1.2rem;">
-                            🖼️ Buat Screenshot
-                        </h3>
-                        <button class="modal-button" id="btn-capture" style="margin-bottom: var(--space-md);">
-                            <span>🎨</span> Buat Gambar Profesional
-                        </button>
-                        <div id="screenshot-preview"></div>
-                    </div>
-                </div>
-
-                <!-- Sticky Footer dengan Button VERTICAL -->
-                <div class="modal-footer">
-                    <div class="button-group-vertical">
-                        <button class="modal-button" id="btn-play-again-share">
-                            <span>🎮</span> Main Lagi
-                        </button>
-                        <button class="modal-button secondary" id="btn-close-share">
-                            <span>←</span> Kembali ke Menu
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -1428,9 +1895,13 @@
         /* ==================================================
          * GAME OVERVIEW:
          * Educational drag-and-drop game about Indonesian heroes.
-         * Mobile-first design with vertical layout.
+         * Mobile-first design with enhanced educational content.
          * ==================================================
          */
+
+        // ============================================
+        // GAME DATA & CONFIGURATION
+        // ============================================
 
         // Difficulty Settings
         const DIFFICULTY_SETTINGS = {
@@ -1440,7 +1911,10 @@
                 scoreMultiplier: 1,
                 wrongPenalty: 1,
                 distractors: 2,
-                name: 'Mudah'
+                name: 'Mudah',
+                icon: '🌱',
+                hintCount: 5,
+                baseScore: 100
             },
             medium: {
                 timePerLevel: 60,
@@ -1448,7 +1922,10 @@
                 scoreMultiplier: 1.5,
                 wrongPenalty: 1,
                 distractors: 2,
-                name: 'Sedang'
+                name: 'Sedang',
+                icon: '⚡',
+                hintCount: 3,
+                baseScore: 150
             },
             hard: {
                 timePerLevel: 30,
@@ -1456,53 +1933,281 @@
                 scoreMultiplier: 2,
                 wrongPenalty: 1,
                 distractors: 3,
-                name: 'Sulit'
+                name: 'Sulit',
+                icon: '🔥',
+                hintCount: 1,
+                baseScore: 200
             }
         };
 
-        // Level data
-        const LEVELS = [
-            {
-                heroId: 'hero_soekarno',
-                correct: 'Soekarno',
-                wrong: ['Soeharto', 'Mohammad Hatta', 'Tan Malaka'],
+        // Enhanced Hero Data with Educational Content
+        const HERO_DATA = {
+            hero_soekarno: {
+                name: 'Soekarno',
+                fullName: 'Ir. Soekarno',
+                born: '6 Juni 1901',
+                died: '21 Juni 1970',
+                birthPlace: 'Surabaya, Jawa Timur',
+                deathPlace: 'Jakarta',
+                era: 'Revolusi Kemerdekaan',
+                category: 'Proklamator',
+                achievements: [
+                    'Proklamator Kemerdekaan Indonesia',
+                    'Presiden Pertama Republik Indonesia',
+                    'Pencipta Konsep Pancasila',
+                    'Pemimpin Gerakan Non-Blok'
+                ],
+                timeline: [
+                    { year: '1901', event: 'Lahir di Surabaya' },
+                    { year: '1927', event: 'Mendirikan Partai Nasional Indonesia' },
+                    { year: '1945', event: 'Memproklamasikan Kemerdekaan Indonesia' },
+                    { year: '1945-1967', event: 'Menjadi Presiden Pertama RI' },
+                    { year: '1970', event: 'Wafat di Jakarta' }
+                ],
+                quotes: [
+                    'Beri aku 1.000 orang tua, niscaya akan kucabut Semeru dari akarnya.',
+                    'Bangunlah suatu dunia di mana semua bangsa hidup dalam damai dan persaudaraan.',
+                    'Jangan sekali-kali melupakan sejarah.'
+                ],
+                funFacts: [
+                    'Dikenal dengan panggilan Bung Karno',
+                    'Merancang banyak monumen di Jakarta',
+                    'Ahli dalam banyak bahasa asing'
+                ],
+                hint: 'Dikenal dengan sebutan Bung Karno'
             },
-            {
-                heroId: 'hero_hatta',
-                correct: 'Mohammad Hatta',
-                wrong: ['Soekarno', 'Tan Malaka', 'Sutan Sjahrir'],
+            hero_hatta: {
+                name: 'Mohammad Hatta',
+                fullName: 'Dr. Drs. H. Mohammad Hatta',
+                born: '12 Agustus 1902',
+                died: '14 Maret 1980',
+                birthPlace: 'Bukittinggi, Sumatra Barat',
+                deathPlace: 'Jakarta',
+                era: 'Revolusi Kemerdekaan',
+                category: 'Proklamator',
+                achievements: [
+                    'Wakil Presiden Pertama Indonesia',
+                    'Proklamator Kemerdekaan',
+                    'Bapak Koperasi Indonesia',
+                    'Aktivis Kemerdekaan'
+                ],
+                timeline: [
+                    { year: '1902', event: 'Lahir di Bukittinggi' },
+                    { year: '1932', event: 'Kembali dari Belanda setelah studi' },
+                    { year: '1945', event: 'Memproklamasikan Kemerdekaan bersama Soekarno' },
+                    { year: '1945-1956', event: 'Wakil Presiden Pertama RI' },
+                    { year: '1980', event: 'Wafat di Jakarta' }
+                ],
+                quotes: [
+                    'Aku rela dipenjara asalkan bersama buku, karena dengan buku aku bebas.',
+                    'Koperasi adalah soko guru perekonomian Indonesia.'
+                ],
+                funFacts: [
+                    'Dikenal sebagai Bapak Koperasi',
+                    'Lulusan ekonomi dari Belanda',
+                    'Sangat gemar membaca'
+                ],
+                hint: 'Dikenal sebagai Bapak Koperasi'
             },
-            {
-                heroId: 'hero_cut_nyak_dien',
-                correct: 'Cut Nyak Dien',
-                wrong: ['Kartini', 'Dewi Sartika', 'Martha Christina Tiahahu'],
+            hero_cut_nyak_dien: {
+                name: 'Cut Nyak Dien',
+                fullName: 'Cut Nyak Dien',
+                born: '1848',
+                died: '6 November 1908',
+                birthPlace: 'Lampadang, Aceh',
+                deathPlace: 'Sumedang, Jawa Barat',
+                era: 'Perang Aceh',
+                category: 'Pahlawan Wanita',
+                achievements: [
+                    'Pemimpin Perang Aceh melawan Belanda',
+                    'Pejuang Kemerdekaan yang Tangguh',
+                    'Simbol Perjuangan Wanita Aceh'
+                ],
+                timeline: [
+                    { year: '1848', event: 'Lahir di Lampadang, Aceh' },
+                    { year: '1873', event: 'Perang Aceh dimulai' },
+                    { year: '1899', event: 'Ditangkap oleh Belanda' },
+                    { year: '1908', event: 'Wafat dalam pengasingan di Sumedang' }
+                ],
+                quotes: [
+                    'Kita tidak boleh menyerah kepada Belanda!',
+                    'Perjuangan ini harus diteruskan oleh generasi berikutnya.'
+                ],
+                funFacts: [
+                    'Dikenal sebagai "Ibu Perbu"',
+                    'Terus berjuang meski sudah tua',
+                    'Dimakamkan di Sumedang, jauh dari tanah kelahiran'
+                ],
+                hint: 'Pejuang wanita dari Aceh'
             },
-            {
-                heroId: 'hero_diponegoro',
-                correct: 'Diponegoro',
-                wrong: ['Pattimura', 'Tuanku Imam Bonjol', 'Teuku Umar'],
+            hero_diponegoro: {
+                name: 'Diponegoro',
+                fullName: 'Pangeran Diponegoro',
+                born: '11 November 1785',
+                died: '8 Januari 1855',
+                birthPlace: 'Yogyakarta',
+                deathPlace: 'Makassar',
+                era: 'Perang Jawa',
+                category: 'Pangeran Pejuang',
+                achievements: [
+                    'Memimpin Perang Jawa (1825-1830)',
+                    'Melawan Penjajahan Belanda',
+                    'Pahlawan Nasional Indonesia'
+                ],
+                timeline: [
+                    { year: '1785', event: 'Lahir di Yogyakarta' },
+                    { year: '1825', event: 'Memulai Perang Diponegoro' },
+                    { year: '1830', event: 'Ditangkap oleh Belanda' },
+                    { year: '1855', event: 'Wafat dalam pengasingan di Makassar' }
+                ],
+                quotes: [
+                    'Lebih baik mati berkalang tanah daripada hidup dijajah.',
+                    'Perjuanganku lebih mudah karena mengusir penjajah, perjuanganmu akan lebih sulit karena melawan bangsamu sendiri.'
+                ],
+                funFacts: [
+                    'Perang Diponegoro adalah perang terbesar melawan Belanda',
+                    'Dikenal sebagai pangeran yang religius',
+                    'Nama aslinya adalah Bendara Raden Mas Mustahar'
+                ],
+                hint: 'Memimpin Perang Jawa tahun 1825-1830'
             },
-            {
-                heroId: 'hero_kartini',
-                correct: 'Kartini',
-                wrong: ['Cut Nyak Dien', 'Dewi Sartika', 'Martha Christina Tiahahu'],
+            hero_kartini: {
+                name: 'Kartini',
+                fullName: 'Raden Adjeng Kartini',
+                born: '21 April 1879',
+                died: '17 September 1904',
+                birthPlace: 'Jepara, Jawa Tengah',
+                deathPlace: 'Rembang, Jawa Tengah',
+                era: 'Kebangkitan Nasional',
+                category: 'Pahlawan Pendidikan',
+                achievements: [
+                    'Pelopor Emansipasi Wanita Indonesia',
+                    'Pendiri Sekolah Wanita',
+                    'Penulis Surat-surat yang Menginspirasi'
+                ],
+                timeline: [
+                    { year: '1879', event: 'Lahir di Jepara' },
+                    { year: '1903', event: 'Mendirikan sekolah wanita' },
+                    { year: '1904', event: 'Wafat saat melahirkan' },
+                    { year: '1911', event: 'Surat-suratnya diterbitkan sebagai "Habis Gelap Terbitlah Terang"' }
+                ],
+                quotes: [
+                    'Habis gelap terbitlah terang.',
+                    'Pendidikan adalah kunci kemajuan bangsa.',
+                    'Kita dapat menjadi manusia sepenuhnya, tanpa berhenti menjadi wanita sepenuhnya.'
+                ],
+                funFacts: [
+                    'Hari Kartini diperingati setiap 21 April',
+                    'Surat-suratnya ditulis dalam bahasa Belanda',
+                    'Sekolah pertamanya hanya memiliki 20 murid'
+                ],
+                hint: 'Pelopor emansipasi wanita Indonesia'
             },
-            {
-                heroId: 'hero_hasanuddin',
-                correct: 'Sultan Hasanuddin',
-                wrong: ['Sultan Agung', 'Pattimura', 'Tuanku Imam Bonjol'],
+            hero_hasanuddin: {
+                name: 'Sultan Hasanuddin',
+                fullName: 'Sultan Hasanuddin',
+                born: '12 Januari 1631',
+                died: '12 Juni 1670',
+                birthPlace: 'Makassar',
+                deathPlace: 'Makassar',
+                era: 'Kerajaan Islam',
+                category: 'Sultan Pejuang',
+                achievements: [
+                    'Sultan Gowa ke-16',
+                    'Melawan VOC Belanda',
+                    'Dijuluki "Ayam Jantan dari Timur"'
+                ],
+                timeline: [
+                    { year: '1631', event: 'Lahir di Makassar' },
+                    { year: '1653', event: 'Menjadi Sultan Gowa' },
+                    { year: '1667', event: 'Perang Makassar melawan VOC' },
+                    { year: '1670', event: 'Wafat di Makassar' }
+                ],
+                quotes: [
+                    'Lebih baik mati daripada menyerah kepada penjajah.',
+                    'Kita harus mempertahankan kedaulatan kerajaan kita.'
+                ],
+                funFacts: [
+                    'Dijuluki "Ayam Jantan dari Timur" oleh Belanda',
+                    'Benteng Somba Opu adalah benteng pertahanannya',
+                    'Makamnya berada di Katangka, Gowa'
+                ],
+                hint: 'Dijuluki "Ayam Jantan dari Timur"'
             },
-            {
-                heroId: 'hero_imam_bonjol',
-                correct: 'Tuanku Imam Bonjol',
-                wrong: ['Diponegoro', 'Teuku Umar', 'Pattimura'],
+            hero_imam_bonjol: {
+                name: 'Tuanku Imam Bonjol',
+                fullName: 'Tuanku Imam Bonjol',
+                born: '1772',
+                died: '6 November 1864',
+                birthPlace: 'Bonjol, Sumatra Barat',
+                deathPlace: 'Manado, Sulawesi Utara',
+                era: 'Perang Padri',
+                category: 'Ulama Pejuang',
+                achievements: [
+                    'Pemimpin Perang Padri',
+                    'Ulama dan Pejuang',
+                    'Pahlawan Nasional Indonesia'
+                ],
+                timeline: [
+                    { year: '1772', event: 'Lahir di Bonjol' },
+                    { year: '1803', event: 'Memimpin Perang Padri' },
+                    { year: '1837', event: 'Ditangkap oleh Belanda' },
+                    { year: '1864', event: 'Wafat dalam pengasingan di Manado' }
+                ],
+                quotes: [
+                    'Jangan sekali-kali meninggalkan shalat.',
+                    'Perjuangan harus dilandasi iman dan takwa.'
+                ],
+                funFacts: [
+                    'Nama aslinya adalah Muhammad Shahab',
+                    'Memimpin perang selama lebih dari 30 tahun',
+                    'Makamnya berada di Pineleng, Manado'
+                ],
+                hint: 'Pemimpin Perang Padri dari Sumatra Barat'
             },
-            {
-                heroId: 'hero_pattimura',
-                correct: 'Pattimura',
-                wrong: ['Sultan Hasanuddin', 'Teuku Umar', 'Sultan Agung'],
-            },
-        ];
+            hero_pattimura: {
+                name: 'Pattimura',
+                fullName: 'Thomas Matulessy (Kapitan Pattimura)',
+                born: '8 Juni 1783',
+                died: '16 Desember 1817',
+                birthPlace: 'Haruku, Maluku',
+                deathPlace: 'Ambon, Maluku',
+                era: 'Perang Maluku',
+                category: 'Kapitan Pejuang',
+                achievements: [
+                    'Memimpin Perang Maluku melawan Belanda',
+                    'Menyatukan kerajaan-kerajaan di Maluku',
+                    'Pahlawan Nasional Indonesia'
+                ],
+                timeline: [
+                    { year: '1783', event: 'Lahir di Haruku, Maluku' },
+                    { year: '1817', event: 'Memimpin perlawanan rakyat Maluku' },
+                    { year: '1817', event: 'Menyerang Benteng Duurstede' },
+                    { year: '1817', event: 'Ditangkap dan dihukum gantung' }
+                ],
+                quotes: [
+                    'Pattimura tua bisa mati, tetapi Pattimura muda akan bangkit.',
+                    'Kita harus bersatu melawan penjajah.'
+                ],
+                funFacts: [
+                    'Nama aslinya adalah Thomas Matulessy',
+                    'Dijuluki "Kapitan Pattimura"',
+                    'Perjuangannya menginspirasi lagu "Maju Tak Gentar"'
+                ],
+                hint: 'Pahlawan dari Maluku yang menggempur Benteng Duurstede'
+            }
+        };
+
+        // Level data menggunakan HERO_DATA
+        const LEVELS = Object.keys(HERO_DATA).map(heroId => ({
+            heroId,
+            correct: HERO_DATA[heroId].name,
+            wrong: Object.values(HERO_DATA)
+                .filter(hero => hero.name !== HERO_DATA[heroId].name)
+                .map(hero => hero.name)
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 3)
+        }));
 
         // Asset cache
         const assetCache = {};
@@ -1522,47 +2227,327 @@
         let draggedCard = null;
         let dragOffset = { x: 0, y: 0 };
         let currentAnswer = null;
+        let hintsUsed = 0;
+        let availableHints = 3;
+        let isHintActive = false;
 
         // ============================================
         // UTILITY FUNCTIONS
         // ============================================
 
-        function showNameModal() {
-            showModal('name-modal');
+        // Show modal dengan smooth animation
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.style.display = 'flex';
+            
+            // Small delay untuk trigger animation
             setTimeout(() => {
-                const input = document.getElementById('player-name-input');
-                input.focus();
-                // Show keyboard on mobile
-                input.click();
+                modal.style.opacity = '1';
+            }, 10);
+            
+            // Prevent body scroll when modal is open
+            document.body.style.overflow = 'hidden';
+            document.getElementById('game-container').style.overflow = 'hidden';
+        }
+
+        // Hide modal dengan smooth animation
+        function hideModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.style.opacity = '0';
+            
+            setTimeout(() => {
+                modal.style.display = 'none';
+                
+                // Restore body scroll hanya jika tidak ada modal lain yang terbuka
+                const anyModalOpen = Array.from(document.querySelectorAll('.modal-overlay'))
+                    .some(modal => modal.style.display === 'flex');
+                
+                if (!anyModalOpen) {
+                    document.body.style.overflow = 'hidden';
+                    document.getElementById('game-container').style.overflow = 'auto';
+                }
             }, 300);
         }
 
-        function showModal(modalId) {
-            document.getElementById(modalId).style.display = 'flex';
-            // Prevent body scroll when modal is open
-            document.body.style.overflow = 'hidden';
+        // Show loading state
+        function showLoading(message = 'Memuat...') {
+            return `
+                <div class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <p class="loading-message">${message}</p>
+                </div>
+            `;
         }
 
-        function hideModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-            // Restore body scroll
-            document.body.style.overflow = 'hidden';
+        // Create confetti effect
+        function createConfetti() {
+            const colors = ['#f59e0b', '#10b981', '#ef4444', '#3b82f6', '#8b5cf6'];
+            const container = document.getElementById('game-container');
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 15 + 10 + 'px';
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                
+                container.appendChild(confetti);
+                
+                // Remove after animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, 2000);
+            }
         }
+
+        // Update progress bar
+        function updateProgressBar(barId, value) {
+            const bar = document.getElementById(barId);
+            if (bar) {
+                bar.style.width = value + '%';
+            }
+        }
+
+        // ============================================
+        // HERO INFO & EDUCATIONAL CONTENT FUNCTIONS
+        // ============================================
+
+        // Show hero information modal
+        function showHeroInfo(heroId) {
+            const hero = HERO_DATA[heroId];
+            if (!hero) return;
+            
+            const modalContent = document.querySelector('#hero-info-modal .hero-info-content');
+            modalContent.innerHTML = showLoading('Memuat informasi pahlawan...');
+            
+            showModal('hero-info-modal');
+            
+            // Update modal title
+            document.getElementById('hero-info-title').textContent = hero.name;
+            document.getElementById('hero-info-subtitle').textContent = hero.category;
+            
+            // Set timeout untuk simulasi loading (bisa dihapus di production)
+            setTimeout(() => {
+                modalContent.innerHTML = createHeroInfoContent(hero);
+            }, 300);
+        }
+
+        // Create hero information content HTML
+        function createHeroInfoContent(hero) {
+            return `
+                <div class="hero-info-section">
+                    <h3><span class="section-icon">📋</span> Informasi Dasar</h3>
+                    <div class="info-grid">
+                        <div class="info-item-grid">
+                            <div class="info-label-grid">Nama Lengkap</div>
+                            <div class="info-value-grid">${hero.fullName}</div>
+                        </div>
+                        <div class="info-item-grid">
+                            <div class="info-label-grid">Lahir</div>
+                            <div class="info-value-grid">${hero.born}</div>
+                        </div>
+                        <div class="info-item-grid">
+                            <div class="info-label-grid">Wafat</div>
+                            <div class="info-value-grid">${hero.died}</div>
+                        </div>
+                        <div class="info-item-grid">
+                            <div class="info-label-grid">Tempat Lahir</div>
+                            <div class="info-value-grid">${hero.birthPlace}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hero-info-section">
+                    <h3><span class="section-icon">🎖️</span> Pencapaian</h3>
+                    <ul style="padding-left: var(--space-lg); color: var(--color-text-dark);">
+                        ${hero.achievements.map(achievement => 
+                            `<li style="margin-bottom: var(--space-xs);">${achievement}</li>`
+                        ).join('')}
+                    </ul>
+                </div>
+                
+                <div class="hero-info-section">
+                    <h3><span class="section-icon">📅</span> Timeline</h3>
+                    <div class="timeline">
+                        ${hero.timeline.map(item => `
+                            <div class="timeline-item">
+                                <div class="timeline-year">${item.year}</div>
+                                <div class="timeline-event">${item.event}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <div class="hero-info-section">
+                    <h3><span class="section-icon">💬</span> Kutipan Terkenal</h3>
+                    <div class="quote-container">
+                        <div class="quote-text">"${hero.quotes[0]}"</div>
+                        <div class="quote-author">- ${hero.name}</div>
+                    </div>
+                </div>
+                
+                <div class="hero-info-section">
+                    <h3><span class="section-icon">✨</span> Fakta Menarik</h3>
+                    <ul style="padding-left: var(--space-lg); color: var(--color-text-dark);">
+                        ${hero.funFacts.map(fact => 
+                            `<li style="margin-bottom: var(--space-xs);">${fact}</li>`
+                        ).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+
+        // ============================================
+        // HINT SYSTEM FUNCTIONS
+        // ============================================
+
+        // Show hint modal
+        function showHintModal() {
+            if (availableHints <= 0) {
+                playSFX('sfx_wrong');
+                return;
+            }
+            
+            document.getElementById('available-hints').textContent = availableHints;
+            showModal('hint-modal');
+            playSFX('sfx_button_click');
+        }
+
+        // Use hint
+        function useHint(hintType) {
+            if (availableHints <= 0 || isHintActive) return;
+            
+            const currentHeroId = LEVELS[currentLevel].heroId;
+            const hero = HERO_DATA[currentHeroId];
+            const hintCost = getHintCost(hintType);
+            
+            if (availableHints < hintCost) {
+                playSFX('sfx_wrong');
+                return;
+            }
+            
+            isHintActive = true;
+            availableHints -= hintCost;
+            hintsUsed++;
+            
+            updateHintDisplay();
+            playSFX('sfx_correct');
+            
+            switch (hintType) {
+                case 'reveal_first_letter':
+                    revealFirstLetter(hero.name);
+                    break;
+                case 'remove_wrong':
+                    removeWrongAnswer();
+                    break;
+                case 'highlight_correct':
+                    highlightCorrectAnswer();
+                    break;
+            }
+            
+            hideModal('hint-modal');
+            
+            // Reset hint active state after delay
+            setTimeout(() => {
+                isHintActive = false;
+            }, 3000);
+        }
+
+        // Get hint cost
+        function getHintCost(hintType) {
+            const costs = {
+                'reveal_first_letter': 1,
+                'remove_wrong': 2,
+                'highlight_correct': 3
+            };
+            return costs[hintType] || 1;
+        }
+
+        // Reveal first letter of the correct answer
+        function revealFirstLetter(correctName) {
+            const firstLetter = correctName.charAt(0);
+            const dropZone = document.getElementById('drop-zone');
+            
+            // Add hint indicator
+            const hintIndicator = document.createElement('div');
+            hintIndicator.className = 'hint-indicator';
+            hintIndicator.textContent = `Huruf pertama: ${firstLetter}`;
+            dropZone.appendChild(hintIndicator);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                hintIndicator.remove();
+            }, 5000);
+        }
+
+        // Remove one wrong answer
+        function removeWrongAnswer() {
+            const cards = document.querySelectorAll('.name-card:not(.dragging)');
+            const wrongCards = Array.from(cards).filter(card => 
+                card.dataset.correct === 'false' && card.style.display !== 'none'
+            );
+            
+            if (wrongCards.length > 0) {
+                const randomCard = wrongCards[Math.floor(Math.random() * wrongCards.length)];
+                randomCard.style.opacity = '0.3';
+                randomCard.style.pointerEvents = 'none';
+                
+                // Animate removal
+                setTimeout(() => {
+                    randomCard.style.transform = 'scale(0)';
+                    setTimeout(() => {
+                        randomCard.style.display = 'none';
+                    }, 300);
+                }, 500);
+            }
+        }
+
+        // Highlight correct answer temporarily
+        function highlightCorrectAnswer() {
+            const correctCard = document.querySelector('.name-card[data-correct="true"]');
+            if (correctCard) {
+                correctCard.classList.add('correct-hint');
+                
+                // Add pulse animation
+                correctCard.style.animation = 'pulse 1s ease-in-out 3';
+                
+                // Remove highlight after 3 seconds
+                setTimeout(() => {
+                    correctCard.classList.remove('correct-hint');
+                    correctCard.style.animation = '';
+                }, 3000);
+            }
+        }
+
+        // Update hint display
+        function updateHintDisplay() {
+            const hintBtn = document.getElementById('hint-btn');
+            const hintCount = document.getElementById('hint-count');
+            const hintCountDisplay = document.getElementById('hint-count-display');
+            
+            hintCount.textContent = availableHints;
+            if (hintCountDisplay) {
+                hintCountDisplay.textContent = availableHints;
+            }
+            
+            if (availableHints <= 0) {
+                hintBtn.classList.add('disabled');
+                hintBtn.title = 'Hint habis';
+            } else {
+                hintBtn.classList.remove('disabled');
+                hintBtn.title = `Petunjuk tersisa: ${availableHints}`;
+            }
+        }
+
+        // ============================================
+        // GAME INITIALIZATION
+        // ============================================
 
         // Initialize game
         function run(mode) {
             console.log('Game starting in mode:', mode);
-
-            // Initialize audio context
-            try {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                sfxGainNode = audioContext.createGain();
-                sfxGainNode.connect(audioContext.destination);
-                bgmGainNode = audioContext.createGain();
-                bgmGainNode.connect(audioContext.destination);
-            } catch (e) {
-                console.log('Audio not supported:', e);
-            }
 
             // Initialize gameConfig if not exists
             if (!window.gameConfig) {
@@ -1574,7 +2559,9 @@
                     sfxVolume: 0.7,
                     bgmVolume: 0.5,
                     difficulty: 'medium',
-                    playerName: 'Player'
+                    playerName: 'Player',
+                    hintCount: 3,
+                    totalHintsUsed: 0
                 };
             }
 
@@ -1590,14 +2577,7 @@
         function preloadAssets() {
             const assetIds = [
                 'background_batik',
-                'hero_soekarno',
-                'hero_hatta',
-                'hero_cut_nyak_dien',
-                'hero_diponegoro',
-                'hero_kartini',
-                'hero_hasanuddin',
-                'hero_imam_bonjol',
-                'hero_pattimura',
+                ...Object.keys(HERO_DATA),
                 'sfx_correct',
                 'sfx_wrong',
                 'sfx_timeout',
@@ -1612,32 +2592,28 @@
             let loadedCount = 0;
             const totalAssets = assetIds.length;
 
-            assetIds.forEach((id) => {
+            // Update loading text
+            const loadingText = document.querySelector('.loading-text');
+            
+            assetIds.forEach((id, index) => {
                 const assetInfo = lib ? lib.getAsset(id) : null;
                 if (assetInfo) {
-                    if (assetInfo.type === 'audio' && audioContext) {
-                        fetch(assetInfo.url)
-                            .then((response) => response.arrayBuffer())
-                            .then((arrayBuffer) =>
-                                audioContext.decodeAudioData(arrayBuffer)
-                            )
-                            .then((audioBuffer) => {
-                                audioBuffers[id] = audioBuffer;
-                                loadedCount++;
-                                console.log(`Loaded audio: ${id}`);
-                                checkLoadComplete();
-                            })
-                            .catch((err) => {
-                                console.warn('Error loading audio ' + id + ': ' + err);
-                                loadedCount++;
-                                checkLoadComplete();
-                            });
+                    if (assetInfo.type === 'audio') {
+                        // For audio, we'll load lazily
+                        loadedCount++;
+                        checkLoadComplete();
                     } else {
                         const img = new Image();
                         img.onload = () => {
                             assetCache[id] = img;
                             loadedCount++;
-                            console.log(`Loaded image: ${id}`);
+                            
+                            // Update loading progress
+                            if (loadingText) {
+                                const progress = Math.floor((loadedCount / totalAssets) * 100);
+                                loadingText.textContent = `Memuat aset... ${progress}%`;
+                            }
+                            
                             checkLoadComplete();
                         };
                         img.onerror = () => {
@@ -1648,8 +2624,6 @@
                         img.src = assetInfo.url || `assets/${id}.jpg`;
                     }
                 } else {
-                    // Fallback for testing
-                    console.warn(`Asset info not found for: ${id}`);
                     loadedCount++;
                     checkLoadComplete();
                 }
@@ -1658,7 +2632,11 @@
             function checkLoadComplete() {
                 if (loadedCount >= totalAssets) {
                     console.log(`All assets loaded: ${loadedCount}/${totalAssets}`);
-                    initGame();
+                    
+                    // Short delay for better UX
+                    setTimeout(() => {
+                        initGame();
+                    }, 500);
                 }
             }
         }
@@ -1677,17 +2655,74 @@
             // Show main menu after splash
             setTimeout(() => {
                 showMainMenu();
-            }, 2000);
+            }, 1000);
 
-            // Start BGM
-            playBGM();
+            // Initialize audio context on first user interaction
+            document.addEventListener('click', initAudio, { once: true });
+            document.addEventListener('touchstart', initAudio, { once: true });
         }
+
+        // Initialize audio context
+        function initAudio() {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                sfxGainNode = audioContext.createGain();
+                sfxGainNode.connect(audioContext.destination);
+                bgmGainNode = audioContext.createGain();
+                bgmGainNode.connect(audioContext.destination);
+                
+                // Set initial volume
+                if (sfxGainNode) sfxGainNode.gain.value = window.gameConfig.sfxVolume;
+                if (bgmGainNode) bgmGainNode.gain.value = window.gameConfig.bgmVolume;
+                
+                // Start BGM
+                playBGM();
+            } catch (e) {
+                console.log('Audio not supported:', e);
+            }
+        }
+
+        // ============================================
+        // EVENT LISTENERS SETUP
+        // ============================================
 
         // Setup all event listeners
         function setupEventListeners() {
             // Info panel toggle
             document.getElementById('info-toggle').addEventListener('click', toggleInfoPanel);
             document.getElementById('info-toggle').addEventListener('touchstart', toggleInfoPanel);
+
+            // Hero info button
+            document.getElementById('hero-info-btn').addEventListener('click', () => {
+                const currentHeroId = LEVELS[currentLevel].heroId;
+                showHeroInfo(currentHeroId);
+                playSFX('sfx_button_click');
+            });
+
+            // Hint button
+            document.getElementById('hint-btn').addEventListener('click', showHintModal);
+            document.getElementById('hint-btn').addEventListener('touchstart', showHintModal);
+
+            // Hint options
+            document.querySelectorAll('.hint-option').forEach(option => {
+                option.addEventListener('click', (e) => {
+                    if (option.classList.contains('disabled')) return;
+                    const hintType = option.dataset.hint;
+                    useHint(hintType);
+                });
+            });
+
+            // Close hint modal
+            document.getElementById('btn-close-hint').addEventListener('click', () => {
+                hideModal('hint-modal');
+                playSFX('sfx_button_click');
+            });
+
+            // Close hero info modal
+            document.getElementById('btn-close-hero-info').addEventListener('click', () => {
+                hideModal('hero-info-modal');
+                playSFX('sfx_button_click');
+            });
 
             // Difficulty buttons
             document.querySelectorAll('.difficulty-btn').forEach(button => {
@@ -1763,14 +2798,31 @@
             });
 
             // Settings modal
-            document.getElementById('sfx-slider').addEventListener('input', (e) => {
-                window.gameConfig.sfxVolume = e.target.value / 100;
+            const sfxSlider = document.getElementById('sfx-slider');
+            const bgmSlider = document.getElementById('bgm-slider');
+            const hintsSlider = document.getElementById('hints-slider');
+
+            sfxSlider.addEventListener('input', (e) => {
+                const value = e.target.value;
+                window.gameConfig.sfxVolume = value / 100;
                 if (sfxGainNode) sfxGainNode.gain.value = window.gameConfig.sfxVolume;
+                document.getElementById('sfx-value').textContent = value + '%';
+                updateProgressBar('sfx-progress', value);
             });
 
-            document.getElementById('bgm-slider').addEventListener('input', (e) => {
-                window.gameConfig.bgmVolume = e.target.value / 100;
+            bgmSlider.addEventListener('input', (e) => {
+                const value = e.target.value;
+                window.gameConfig.bgmVolume = value / 100;
                 if (bgmGainNode) bgmGainNode.gain.value = window.gameConfig.bgmVolume;
+                document.getElementById('bgm-value').textContent = value + '%';
+                updateProgressBar('bgm-progress', value);
+            });
+
+            hintsSlider.addEventListener('input', (e) => {
+                const value = e.target.value;
+                window.gameConfig.hintCount = parseInt(value);
+                document.getElementById('hints-value').textContent = value;
+                updateProgressBar('hints-progress', ((value - 1) / 4) * 100);
             });
 
             document.getElementById('btn-close-settings').addEventListener('click', () => {
@@ -1828,25 +2880,6 @@
                 showMainMenu();
             });
 
-            // Share modal
-            document.getElementById('btn-capture').addEventListener('click', captureScreenshot);
-            document.getElementById('btn-close-share').addEventListener('click', () => {
-                playSFX('sfx_button_click');
-                hideModal('share-modal');
-                showMainMenu();
-            });
-            document.getElementById('btn-play-again-share').addEventListener('click', () => {
-                playSFX('sfx_button_click');
-                hideModal('share-modal');
-                startGame();
-            });
-
-            // Setup share buttons
-            document.querySelectorAll('.share-button').forEach(button => {
-                button.addEventListener('click', handleShare);
-                button.addEventListener('touchstart', handleShare);
-            });
-
             // Drag and drop events
             setupDragAndDrop();
         }
@@ -1868,180 +2901,11 @@
                 <p><strong>${settings.name}:</strong> 
                 ${settings.timePerLevel} detik/level, 
                 ${settings.lives} nyawa, 
-                ×${settings.scoreMultiplier} skor</p>
+                ×${settings.scoreMultiplier} skor,
+                ${settings.hintCount} hint</p>
             `;
 
             playSFX('sfx_button_click');
-        }
-
-        function savePlayerName() {
-            const nameInput = document.getElementById('player-name-input');
-            const playerName = nameInput.value.trim() || 'Player';
-
-            if (playerName.length > 0) {
-                window.gameConfig.playerName = playerName.substring(0, 20);
-                playSFX('sfx_button_click');
-                hideModal('name-modal');
-
-                // Start game
-                gamePhase = 'playing';
-                const difficulty = window.gameConfig.difficulty;
-                const settings = DIFFICULTY_SETTINGS[difficulty];
-
-                window.gameConfig.currentLevel = 1;
-                window.gameConfig.score = 0;
-                window.gameConfig.lives = settings.lives;
-                currentLevel = 0;
-
-                document.getElementById('main-menu').style.display = 'none';
-                document.getElementById('game-screen').style.display = 'flex';
-
-                document.getElementById('difficulty-indicator').textContent = settings.name;
-                document.getElementById('difficulty-value').textContent = settings.name;
-
-                loadLevel(0);
-            }
-        }
-
-        function handleShare(e) {
-            e.preventDefault();
-            const platform = e.currentTarget.dataset.platform;
-            const score = window.gameConfig.score;
-            const playerName = window.gameConfig.playerName;
-            const difficulty = window.gameConfig.difficulty;
-            const difficultyText = DIFFICULTY_SETTINGS[difficulty].name;
-
-            const shareData = {
-                title: `PATRION - Pahlawan Puzzle - ${score} Poin`,
-                text: `Saya mendapatkan ${score} poin dalam game PATRION - Pahlawan Puzzle!\nNama: ${playerName}\nTingkat: ${difficultyText}\n\nCoba tantangannya di: ${window.location.href}`,
-                url: window.location.href
-            };
-
-            switch (platform) {
-                case 'whatsapp':
-                    window.open(`https://wa.me/?text=${encodeURIComponent(shareData.text)}`, '_blank');
-                    break;
-                case 'facebook':
-                    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareData.url)}`, '_blank');
-                    break;
-                case 'twitter':
-                    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareData.text)}`, '_blank');
-                    break;
-                case 'copy':
-                    navigator.clipboard.writeText(shareData.text).then(() => {
-                        alert('Teks berhasil disalin!');
-                    }).catch(err => {
-                        console.error('Failed to copy text:', err);
-                        // Fallback for older browsers
-                        const textArea = document.createElement('textarea');
-                        textArea.value = shareData.text;
-                        document.body.appendChild(textArea);
-                        textArea.select();
-                        try {
-                            document.execCommand('copy');
-                            alert('Teks berhasil disalin!');
-                        } catch (err) {
-                            console.error('Fallback copy failed:', err);
-                            alert('Gagal menyalin teks. Silakan salin manual.');
-                        }
-                        document.body.removeChild(textArea);
-                    });
-                    break;
-            }
-
-            playSFX('sfx_button_click');
-        }
-
-        function setupDragAndDrop() {
-            let isDragging = false;
-            let startX, startY;
-
-            document.addEventListener('mousedown', startDrag);
-            document.addEventListener('touchstart', startDrag, { passive: false });
-
-            function startDrag(e) {
-                const card = e.target.closest('.name-card');
-                if (!card || isDragging) return;
-
-                isDragging = true;
-                draggedCard = card;
-                draggedCard.classList.add('dragging');
-
-                const rect = card.getBoundingClientRect();
-                startX = (e.type === 'touchstart' ? e.touches[0].clientX : e.clientX) - rect.left;
-                startY = (e.type === 'touchstart' ? e.touches[0].clientY : e.clientY) - rect.top;
-
-                draggedCard.style.position = 'fixed';
-                draggedCard.style.zIndex = '1000';
-                draggedCard.style.width = rect.width + 'px';
-
-                document.addEventListener('mousemove', doDrag);
-                document.addEventListener('touchmove', doDrag, { passive: false });
-                document.addEventListener('mouseup', endDrag);
-                document.addEventListener('touchend', endDrag);
-                document.addEventListener('touchcancel', endDrag);
-
-                playSFX('sfx_drag_pickup');
-                e.preventDefault();
-            }
-
-            function doDrag(e) {
-                if (!draggedCard || !isDragging) return;
-
-                const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
-                const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
-
-                draggedCard.style.left = (clientX - startX) + 'px';
-                draggedCard.style.top = (clientY - startY) + 'px';
-
-                // Check drop zone
-                const dropZone = document.getElementById('drop-zone');
-                const dropRect = dropZone.getBoundingClientRect();
-
-                if (clientX >= dropRect.left && clientX <= dropRect.right &&
-                    clientY >= dropRect.top && clientY <= dropRect.bottom) {
-                    const isCorrect = draggedCard.dataset.correct === 'true';
-                    dropZone.className = isCorrect ? 'highlight-correct' : 'highlight-wrong';
-                } else {
-                    dropZone.className = '';
-                }
-
-                e.preventDefault();
-            }
-
-            function endDrag(e) {
-                if (!draggedCard || !isDragging) return;
-
-                isDragging = false;
-                const clientX = e.type === 'touchend' ? e.changedTouches[0].clientX : e.clientX;
-                const clientY = e.type === 'touchend' ? e.changedTouches[0].clientY : e.clientY;
-
-                const dropZone = document.getElementById('drop-zone');
-                const dropRect = dropZone.getBoundingClientRect();
-
-                if (clientX >= dropRect.left && clientX <= dropRect.right &&
-                    clientY >= dropRect.top && clientY <= dropRect.bottom) {
-                    playSFX('sfx_drag_drop');
-                    handleAnswer(draggedCard);
-                } else {
-                    draggedCard.style.position = '';
-                    draggedCard.style.left = '';
-                    draggedCard.style.top = '';
-                    draggedCard.style.width = '';
-                    draggedCard.style.zIndex = '';
-                }
-
-                draggedCard.classList.remove('dragging');
-                draggedCard = null;
-
-                document.removeEventListener('mousemove', doDrag);
-                document.removeEventListener('touchmove', doDrag);
-                document.removeEventListener('mouseup', endDrag);
-                document.removeEventListener('touchend', endDrag);
-                document.removeEventListener('touchcancel', endDrag);
-
-                e.preventDefault();
-            }
         }
 
         // ============================================
@@ -2061,6 +2925,35 @@
             document.getElementById('main-menu').style.display = 'flex';
             document.getElementById('info-panel').classList.remove('is-visible');
             document.getElementById('player-name-display').textContent = window.gameConfig.playerName;
+            
+            // Update profile info
+            document.getElementById('player-level').textContent = window.gameConfig.currentLevel;
+            document.getElementById('player-score').textContent = window.gameConfig.score;
+            document.getElementById('player-high-score').textContent = window.gameConfig.highScore;
+        }
+
+        function savePlayerName() {
+            const nameInput = document.getElementById('player-name-input');
+            const playerName = nameInput.value.trim() || 'Player';
+
+            if (playerName.length > 0) {
+                window.gameConfig.playerName = playerName.substring(0, 20);
+                playSFX('sfx_button_click');
+                hideModal('name-modal');
+
+                // Start game
+                startGame();
+            }
+        }
+
+        function showNameModal() {
+            showModal('name-modal');
+            setTimeout(() => {
+                const input = document.getElementById('player-name-input');
+                input.focus();
+                // Show keyboard on mobile
+                input.click();
+            }, 300);
         }
 
         function startGame() {
@@ -2073,40 +2966,58 @@
             const difficulty = window.gameConfig.difficulty;
             const settings = DIFFICULTY_SETTINGS[difficulty];
 
+            // Reset game state
             window.gameConfig.currentLevel = 1;
             window.gameConfig.score = 0;
             window.gameConfig.lives = settings.lives;
             currentLevel = 0;
+            availableHints = window.gameConfig.hintCount || settings.hintCount;
+            hintsUsed = 0;
 
             document.getElementById('main-menu').style.display = 'none';
             document.getElementById('game-screen').style.display = 'flex';
 
-            document.getElementById('difficulty-indicator').textContent = settings.name;
+            // Update HUD
+            document.getElementById('difficulty-indicator').innerHTML = `
+                <span class="difficulty-icon-small">${settings.icon}</span>
+                <span>${settings.name}</span>
+            `;
             document.getElementById('difficulty-value').textContent = settings.name;
 
+            updateHintDisplay();
             loadLevel(0);
         }
 
         function loadLevel(levelIndex) {
             currentLevel = levelIndex;
             const level = LEVELS[levelIndex];
+            const hero = HERO_DATA[level.heroId];
             const difficulty = window.gameConfig.difficulty;
             const settings = DIFFICULTY_SETTINGS[difficulty];
 
             timeRemaining = settings.timePerLevel;
 
+            // Update displays
             document.getElementById('level-display').textContent = levelIndex + 1;
             document.getElementById('score-display').textContent = window.gameConfig.score;
             updateLivesDisplay();
 
+            // Load hero image
             const heroImg = document.getElementById('hero-portrait');
             if (assetCache[level.heroId]) {
                 heroImg.src = assetCache[level.heroId].src;
+                heroImg.alt = hero.name;
             } else {
                 console.warn(`Image not found for hero: ${level.heroId}`);
                 heroImg.src = '';
+                heroImg.alt = 'Pahlawan';
             }
 
+            // Update hero info button
+            const heroInfoBtn = document.getElementById('hero-info-btn');
+            heroInfoBtn.title = `Lihat informasi tentang ${hero.name}`;
+
+            // Create name cards
             const nameCardsSection = document.getElementById('name-cards-section');
             nameCardsSection.innerHTML = '';
 
@@ -2125,14 +3036,23 @@
                 card.textContent = name;
                 card.dataset.name = name;
                 card.dataset.correct = name === level.correct ? 'true' : 'false';
+                
+                // Add subtle hint for some cards
+                if (name === level.correct && hero.hint) {
+                    card.title = `Petunjuk: ${hero.hint}`;
+                }
+                
                 nameCardsSection.appendChild(card);
             });
 
+            // Reset drop zone
             const dropZone = document.getElementById('drop-zone');
-            dropZone.textContent = 'Seret nama di sini';
+            dropZone.textContent = 'Seret nama pahlawan ke sini';
             dropZone.className = '';
+            dropZone.innerHTML = 'Seret nama pahlawan ke sini';
             currentAnswer = null;
 
+            // Start timer
             startTimer();
         }
 
@@ -2140,12 +3060,15 @@
             const livesDisplay = document.getElementById('lives-display');
             livesDisplay.innerHTML = '';
 
-            for (let i = 0; i < 5; i++) {
+            const maxLives = 5;
+            const currentLives = window.gameConfig.lives;
+
+            for (let i = 0; i < maxLives; i++) {
                 const heart = document.createElement('span');
                 heart.className = 'heart';
                 heart.textContent = '♥';
 
-                if (i < window.gameConfig.lives) {
+                if (i < currentLives) {
                     heart.classList.add('filled');
                 } else {
                     heart.classList.add('empty');
@@ -2201,6 +3124,102 @@
             loadLevel(currentLevel);
         }
 
+        function setupDragAndDrop() {
+            let isDragging = false;
+            let startX, startY;
+
+            document.addEventListener('mousedown', startDrag);
+            document.addEventListener('touchstart', startDrag, { passive: false });
+
+            function startDrag(e) {
+                const card = e.target.closest('.name-card');
+                if (!card || isDragging || card.style.display === 'none') return;
+
+                isDragging = true;
+                draggedCard = card;
+                draggedCard.classList.add('dragging');
+
+                const rect = card.getBoundingClientRect();
+                const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+                const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+                
+                startX = clientX - rect.left;
+                startY = clientY - rect.top;
+
+                draggedCard.style.position = 'fixed';
+                draggedCard.style.zIndex = '1000';
+                draggedCard.style.width = rect.width + 'px';
+
+                document.addEventListener('mousemove', doDrag);
+                document.addEventListener('touchmove', doDrag, { passive: false });
+                document.addEventListener('mouseup', endDrag);
+                document.addEventListener('touchend', endDrag);
+                document.addEventListener('touchcancel', endDrag);
+
+                playSFX('sfx_drag_pickup');
+                e.preventDefault();
+            }
+
+            function doDrag(e) {
+                if (!draggedCard || !isDragging) return;
+
+                const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+                const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+
+                draggedCard.style.left = (clientX - startX) + 'px';
+                draggedCard.style.top = (clientY - startY) + 'px';
+
+                // Check drop zone
+                const dropZone = document.getElementById('drop-zone');
+                const dropRect = dropZone.getBoundingClientRect();
+
+                if (clientX >= dropRect.left && clientX <= dropRect.right &&
+                    clientY >= dropRect.top && clientY <= dropRect.bottom) {
+                    const isCorrect = draggedCard.dataset.correct === 'true';
+                    dropZone.className = isCorrect ? 'highlight-correct' : 'highlight-wrong';
+                } else {
+                    dropZone.className = '';
+                }
+
+                e.preventDefault();
+            }
+
+            function endDrag(e) {
+                if (!draggedCard || !isDragging) return;
+
+                isDragging = false;
+                const clientX = e.type === 'touchend' ? e.changedTouches[0].clientX : e.clientX;
+                const clientY = e.type === 'touchend' ? e.changedTouches[0].clientY : e.clientY;
+
+                const dropZone = document.getElementById('drop-zone');
+                const dropRect = dropZone.getBoundingClientRect();
+
+                if (clientX >= dropRect.left && clientX <= dropRect.right &&
+                    clientY >= dropRect.top && clientY <= dropRect.bottom) {
+                    playSFX('sfx_drag_drop');
+                    handleAnswer(draggedCard);
+                } else {
+                    // Return card to original position
+                    draggedCard.style.position = '';
+                    draggedCard.style.left = '';
+                    draggedCard.style.top = '';
+                    draggedCard.style.width = '';
+                    draggedCard.style.zIndex = '';
+                }
+
+                draggedCard.classList.remove('dragging');
+                draggedCard = null;
+
+                document.removeEventListener('mousemove', doDrag);
+                document.removeEventListener('touchmove', doDrag);
+                document.removeEventListener('mouseup', endDrag);
+                document.removeEventListener('touchend', endDrag);
+                document.removeEventListener('touchcancel', endDrag);
+
+                e.preventDefault();
+            }
+        }
+
         function handleAnswer(card) {
             clearInterval(timerInterval);
 
@@ -2211,9 +3230,14 @@
 
             if (isCorrect) {
                 playSFX('sfx_correct');
-                const baseScore = 100;
+                const baseScore = settings.baseScore;
                 const multipliedScore = Math.floor(baseScore * settings.scoreMultiplier);
                 window.gameConfig.score += multipliedScore;
+                
+                // Bonus for unused hints
+                const hintBonus = availableHints * 20;
+                window.gameConfig.score += hintBonus;
+                
                 document.getElementById('score-display').textContent = window.gameConfig.score;
 
                 dropZone.textContent = card.textContent;
@@ -2221,8 +3245,9 @@
                 card.style.display = 'none';
 
                 createParticles(dropZone);
+                createConfetti();
 
-                document.getElementById('correct-score').textContent = `+${multipliedScore}`;
+                document.getElementById('correct-score').textContent = `+${multipliedScore + hintBonus}`;
                 showModal('correct-modal');
 
                 setTimeout(() => {
@@ -2234,7 +3259,7 @@
                     } else {
                         showVictory();
                     }
-                }, 3000);
+                }, 2000);
             } else {
                 playSFX('sfx_wrong');
                 window.gameConfig.lives -= settings.wrongPenalty;
@@ -2243,6 +3268,8 @@
                 document.getElementById('wrong-penalty-text').textContent =
                     settings.wrongPenalty === 0 ? 'Tidak mengurangi nyawa' :
                     settings.wrongPenalty === 1 ? 'Nyawa berkurang 1' : 'Nyawa berkurang 2';
+                    
+                document.getElementById('wrong-lives').textContent = window.gameConfig.lives;
 
                 dropZone.classList.add('shake');
                 card.style.display = 'none';
@@ -2256,7 +3283,7 @@
                     setTimeout(() => {
                         hideModal('wrong-modal');
                         resetLevel();
-                    }, 3000);
+                    }, 2000);
                 }
             }
         }
@@ -2266,19 +3293,23 @@
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
 
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < 12; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
                 particle.style.left = centerX + 'px';
                 particle.style.top = centerY + 'px';
 
-                const angle = (i / 8) * Math.PI * 2;
-                const distance = 80;
+                const angle = (i / 12) * Math.PI * 2;
+                const distance = 100;
                 const tx = Math.cos(angle) * distance;
                 const ty = Math.sin(angle) * distance;
 
                 particle.style.setProperty('--tx', tx + 'px');
                 particle.style.setProperty('--ty', ty + 'px');
+
+                // Random color
+                const colors = ['#f59e0b', '#10b981', '#ef4444', '#3b82f6'];
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
 
                 document.getElementById('game-container').appendChild(particle);
 
@@ -2296,12 +3327,11 @@
             saveToLeaderboard(window.gameConfig.score);
             document.getElementById('victory-score').textContent = window.gameConfig.score;
 
-            setTimeout(() => {
-                hideModal('victory-modal');
-                showShareModal(window.gameConfig.score);
-            }, 2000);
+            createConfetti();
 
-            showModal('victory-modal');
+            setTimeout(() => {
+                showModal('victory-modal');
+            }, 500);
         }
 
         function showGameOver() {
@@ -2315,27 +3345,33 @@
             document.getElementById('gameover-score').textContent = window.gameConfig.score;
 
             setTimeout(() => {
-                hideModal('gameover-modal');
-                showShareModal(window.gameConfig.score);
-            }, 2000);
-
-            showModal('gameover-modal');
-        }
-
-        function showShareModal(score) {
-            document.getElementById('share-score').textContent = score;
-            document.getElementById('screenshot-preview').innerHTML = '';
-            showModal('share-modal');
+                showModal('gameover-modal');
+            }, 500);
         }
 
         function showSettings() {
-            document.getElementById('sfx-slider').value = window.gameConfig.sfxVolume * 100;
-            document.getElementById('bgm-slider').value = window.gameConfig.bgmVolume * 100;
+            const sfxSlider = document.getElementById('sfx-slider');
+            const bgmSlider = document.getElementById('bgm-slider');
+            const hintsSlider = document.getElementById('hints-slider');
+            
+            sfxSlider.value = window.gameConfig.sfxVolume * 100;
+            bgmSlider.value = window.gameConfig.bgmVolume * 100;
+            hintsSlider.value = window.gameConfig.hintCount;
+            
+            document.getElementById('sfx-value').textContent = Math.round(window.gameConfig.sfxVolume * 100) + '%';
+            document.getElementById('bgm-value').textContent = Math.round(window.gameConfig.bgmVolume * 100) + '%';
+            document.getElementById('hints-value').textContent = window.gameConfig.hintCount;
+            
+            updateProgressBar('sfx-progress', window.gameConfig.sfxVolume * 100);
+            updateProgressBar('bgm-progress', window.gameConfig.bgmVolume * 100);
+            updateProgressBar('hints-progress', ((window.gameConfig.hintCount - 1) / 4) * 100);
+            
             showModal('settings-modal');
         }
 
         function showProfile() {
             document.getElementById('player-name-display').textContent = window.gameConfig.playerName;
+            document.getElementById('player-level').textContent = window.gameConfig.currentLevel;
             document.getElementById('player-score').textContent = window.gameConfig.score;
             document.getElementById('player-high-score').textContent = window.gameConfig.highScore;
             loadLeaderboard();
@@ -2347,41 +3383,71 @@
         }
 
         function playSFX(sfxId) {
-            if (!audioBuffers[sfxId] || !audioContext) return;
-
-            try {
-                const source = audioContext.createBufferSource();
-                source.buffer = audioBuffers[sfxId];
-                source.connect(sfxGainNode);
-                source.start(0);
-            } catch (e) {
-                console.log('SFX error:', e);
+            if (!audioContext || !sfxGainNode) return;
+            
+            // Lazy load audio buffers
+            if (!audioBuffers[sfxId]) {
+                const assetInfo = lib ? lib.getAsset(sfxId) : null;
+                if (!assetInfo) return;
+                
+                fetch(assetInfo.url)
+                    .then(response => response.arrayBuffer())
+                    .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+                    .then(audioBuffer => {
+                        audioBuffers[sfxId] = audioBuffer;
+                        playAudioBuffer(audioBuffer);
+                    })
+                    .catch(err => console.log('SFX load error:', err));
+            } else {
+                playAudioBuffer(audioBuffers[sfxId]);
+            }
+            
+            function playAudioBuffer(buffer) {
+                try {
+                    const source = audioContext.createBufferSource();
+                    source.buffer = buffer;
+                    source.connect(sfxGainNode);
+                    source.start(0);
+                } catch (e) {
+                    console.log('SFX play error:', e);
+                }
             }
         }
 
         function playBGM() {
-            if (!audioBuffers['bgm_main'] || !audioContext) return;
-
-            if (bgmSource) bgmSource.stop();
-
-            bgmSource = audioContext.createBufferSource();
-            bgmSource.buffer = audioBuffers['bgm_main'];
-            bgmSource.loop = true;
-            bgmSource.connect(bgmGainNode);
-            bgmSource.start(0);
+            if (!audioContext || !bgmGainNode) return;
+            
+            const bgmId = 'bgm_main';
+            const assetInfo = lib ? lib.getAsset(bgmId) : null;
+            if (!assetInfo) return;
+            
+            fetch(assetInfo.url)
+                .then(response => response.arrayBuffer())
+                .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+                .then(audioBuffer => {
+                    if (bgmSource) bgmSource.stop();
+                    
+                    bgmSource = audioContext.createBufferSource();
+                    bgmSource.buffer = audioBuffer;
+                    bgmSource.loop = true;
+                    bgmSource.connect(bgmGainNode);
+                    bgmSource.start(0);
+                })
+                .catch(err => console.log('BGM load error:', err));
         }
 
         function saveToLeaderboard(score) {
-            // Simpan ke localStorage untuk demo
             try {
                 let leaderboard = JSON.parse(localStorage.getItem('pahlawan_leaderboard')) || [];
                 leaderboard.push({
                     name: window.gameConfig.playerName,
                     score: score,
                     difficulty: window.gameConfig.difficulty,
+                    hintsUsed: hintsUsed,
                     timestamp: Date.now(),
                 });
 
+                // Sort by score descending
                 leaderboard.sort((a, b) => b.score - a.score);
                 leaderboard = leaderboard.slice(0, 10);
 
@@ -2395,16 +3461,26 @@
             try {
                 const leaderboard = JSON.parse(localStorage.getItem('pahlawan_leaderboard')) || [];
                 const leaderboardDiv = document.getElementById('leaderboard');
-                leaderboardDiv.innerHTML = '';
-
+                
                 if (leaderboard.length === 0) {
-                    leaderboardDiv.innerHTML = '<p style="text-align: center; color: #6B7280;">Belum ada data leaderboard</p>';
+                    leaderboardDiv.innerHTML = `
+                        <div style="text-align: center; padding: var(--space-lg); background: var(--color-bg-light); border-radius: var(--radius-lg);">
+                            <p style="color: var(--color-text-medium); margin-bottom: var(--space-sm);">🏆</p>
+                            <p style="color: var(--color-text-medium);">Belum ada data leaderboard</p>
+                            <p style="font-size: 0.85rem; color: var(--color-text-light); margin-top: var(--space-sm);">
+                                Main game untuk muncul di sini!
+                            </p>
+                        </div>
+                    `;
                     return;
                 }
 
+                leaderboardDiv.innerHTML = '';
+                
                 leaderboard.forEach((entry, index) => {
                     const entryDiv = document.createElement('div');
-                    entryDiv.className = 'leaderboard-entry';
+                    entryDiv.className = 'leaderboard-entry slide-in-right';
+                    entryDiv.style.animationDelay = (index * 0.1) + 's';
 
                     const difficultyIcon = entry.difficulty === 'easy' ? '🌱' :
                                           entry.difficulty === 'medium' ? '⚡' : '🔥';
@@ -2412,399 +3488,19 @@
                     entryDiv.innerHTML = `
                         <span class="leaderboard-rank">#${index + 1}</span>
                         <div style="flex: 1; display: flex; flex-direction: column;">
-                            <span class="leaderboard-name">${entry.name}</span>
-                            <span style="font-size: 0.8rem; color: #6B7280;">${difficultyIcon} ${entry.difficulty}</span>
+                            <span class="leaderboard-name" style="font-weight: 600; color: var(--color-text-dark);">${entry.name}</span>
+                            <span style="font-size: 0.8rem; color: var(--color-text-medium);">
+                                ${difficultyIcon} ${entry.difficulty}
+                                ${entry.hintsUsed ? ` • 💡${entry.hintsUsed}` : ''}
+                            </span>
                         </div>
-                        <span class="leaderboard-score">${entry.score}</span>
+                        <span class="leaderboard-score" style="font-weight: 700; color: var(--color-gold); font-size: 1.1rem;">${entry.score}</span>
                     `;
 
                     leaderboardDiv.appendChild(entryDiv);
                 });
             } catch (e) {
                 console.log('Leaderboard load error:', e);
-            }
-        }
-
-        // ============================================
-        // IMPROVED SCREENSHOT FUNCTIONALITY WITH GAME COLORS
-        // ============================================
-
-        async function captureScreenshot() {
-            const preview = document.getElementById('screenshot-preview');
-            
-            // Clear previous content
-            preview.innerHTML = `
-                <div style="text-align: center;">
-                    <div class="loading-indicator"></div>
-                    <p style="margin-top: 8px; color: var(--color-text-medium);">Membuat screenshot...</p>
-                </div>
-            `;
-            
-            playSFX('sfx_button_click');
-            
-            // Check if html2canvas is available
-            if (typeof html2canvas === 'undefined') {
-                preview.innerHTML = `
-                    <div style="text-align: center; padding: var(--space-md); background: var(--color-bg-light); border-radius: var(--radius-lg);">
-                        <p style="color: var(--color-error); margin-bottom: var(--space-sm);">❌ Library screenshot tidak tersedia</p>
-                        <p style="font-size: 0.9rem; color: var(--color-text-medium);">
-                            Pastikan script html2canvas dimuat dengan benar.
-                        </p>
-                    </div>
-                `;
-                return;
-            }
-            
-            try {
-                // Get CSS custom properties from game
-                const rootStyles = getComputedStyle(document.documentElement);
-                const getColor = (property) => rootStyles.getPropertyValue(property).trim();
-                
-                const gameColors = {
-                    primary: getColor('--color-primary'),
-                    primaryDark: getColor('--color-primary-dark'),
-                    gold: getColor('--color-gold'),
-                    goldDark: getColor('--color-gold-dark'),
-                    success: getColor('--color-success'),
-                    error: getColor('--color-error'),
-                    white: getColor('--color-white'),
-                    textDark: getColor('--color-text-dark'),
-                    textMedium: getColor('--color-text-medium'),
-                    textLight: getColor('--color-text-light'),
-                    bgLight: getColor('--color-bg-light')
-                };
-                
-                // Create a temporary container for screenshot
-                const screenshotContainer = document.createElement('div');
-                screenshotContainer.style.position = 'fixed';
-                screenshotContainer.style.left = '-9999px';
-                screenshotContainer.style.top = '-9999px';
-                screenshotContainer.style.width = '400px';
-                screenshotContainer.style.backgroundColor = gameColors.white;
-                screenshotContainer.style.borderRadius = '20px'; // var(--radius-xl)
-                screenshotContainer.style.padding = '32px'; // var(--space-xl)
-                screenshotContainer.style.boxShadow = '0 16px 32px rgba(0, 0, 0, 0.25)'; // var(--shadow-xl)
-                screenshotContainer.style.textAlign = 'center';
-                screenshotContainer.style.fontFamily = "'Poppins', sans-serif";
-                
-                // Get game info
-                const difficultyText = DIFFICULTY_SETTINGS[window.gameConfig.difficulty].name;
-                const date = new Date().toLocaleDateString('id-ID', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
-                });
-                
-                // Create gradient for header (matching game gradient)
-                const headerGradient = `linear-gradient(135deg, ${gameColors.primary}, ${gameColors.white})`;
-                
-                // Create content with game colors
-                screenshotContainer.innerHTML = `
-                    <div style="
-                        background: ${headerGradient};
-                        margin: -32px -32px 24px -32px;
-                        padding: 32px;
-                        border-radius: 20px 20px 0 0;
-                        position: relative;
-                        overflow: hidden;
-                    ">
-                        <div style="
-                            position: absolute;
-                            top: 0;
-                            left: 0;
-                            right: 0;
-                            bottom: 0;
-                            opacity: 0.1;
-                            background-image: url('https://game-pahlawan-puzzle.patrion.id/assets/images/background_batik.webp');
-                            background-size: cover;
-                            background-position: center;
-                        "></div>
-                        
-                        <h1 style="
-                            font-family: 'Bebas Neue', sans-serif;
-                            font-size: 2.5rem;
-                            color: ${gameColors.gold};
-                            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
-                            position: relative;
-                            z-index: 1;
-                        ">
-                            PATRION<br />Pahlawan Puzzle
-                        </h1>
-                    </div>
-                    
-                    <!-- Player Info Card (matching game card style) -->
-                    <div style="
-                        background: ${gameColors.white};
-                        border: 3px solid ${gameColors.gold};
-                        border-radius: 16px; /* var(--radius-lg) */
-                        padding: 24px; /* var(--space-lg) */
-                        margin-bottom: 24px;
-                        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* var(--shadow-lg) */
-                        text-align: left;
-                    ">
-                        <!-- Player Name -->
-                        <div style="
-                            display: flex;
-                            justify-content: space-between;
-                            align-items: center;
-                            margin-bottom: 16px;
-                            padding-bottom: 12px;
-                            border-bottom: 1px solid ${gameColors.bgLight};
-                        ">
-                            <span style="
-                                color: ${gameColors.textMedium};
-                                font-weight: 600;
-                                font-size: 0.9rem;
-                            ">Pemain</span>
-                            <strong style="
-                                color: ${gameColors.textDark};
-                                font-size: 1.1rem;
-                            ">${window.gameConfig.playerName}</strong>
-                        </div>
-                        
-                        <!-- Score (Highlighted like in-game) -->
-                        <div style="
-                            display: flex;
-                            justify-content: space-between;
-                            align-items: center;
-                            margin-bottom: 16px;
-                            padding-bottom: 12px;
-                            border-bottom: 1px solid ${gameColors.bgLight};
-                        ">
-                            <span style="
-                                color: ${gameColors.textMedium};
-                                font-weight: 600;
-                                font-size: 0.9rem;
-                            ">Skor</span>
-                            <strong style="
-                                color: ${gameColors.gold};
-                                font-size: 1.5rem;
-                                font-weight: 700;
-                                text-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
-                            ">${window.gameConfig.score}</strong>
-                        </div>
-                        
-                        <!-- Difficulty with color-coded badge -->
-                        <div style="
-                            display: flex;
-                            justify-content: space-between;
-                            align-items: center;
-                            margin-bottom: 16px;
-                            padding-bottom: 12px;
-                            border-bottom: 1px solid ${gameColors.bgLight};
-                        ">
-                            <span style="
-                                color: ${gameColors.textMedium};
-                                font-weight: 600;
-                                font-size: 0.9rem;
-                            ">Kesulitan</span>
-                            <div style="
-                                background: ${window.gameConfig.difficulty === 'easy' ? 
-                                    'linear-gradient(135deg, #10b981, #059669)' : 
-                                    window.gameConfig.difficulty === 'medium' ? 
-                                    'linear-gradient(135deg, #f59e0b, #d97706)' : 
-                                    'linear-gradient(135deg, #ef4444, #dc2626)'};
-                                color: white;
-                                padding: 4px 12px;
-                                border-radius: 20px;
-                                font-size: 0.85rem;
-                                font-weight: 600;
-                                display: flex;
-                                align-items: center;
-                                gap: 4px;
-                            ">
-                                ${window.gameConfig.difficulty === 'easy' ? '🌱' : 
-                                window.gameConfig.difficulty === 'medium' ? '⚡' : '🔥'}
-                                ${difficultyText}
-                            </div>
-                        </div>
-                        
-                        <!-- Date -->
-                        <div style="
-                            display: flex;
-                            justify-content: space-between;
-                            align-items: center;
-                        ">
-                            <span style="
-                                color: ${gameColors.textMedium};
-                                font-weight: 600;
-                                font-size: 0.9rem;
-                            ">Tanggal</span>
-                            <strong style="
-                                color: ${gameColors.textDark};
-                                font-size: 0.9rem;
-                            ">${date}</strong>
-                        </div>
-                    </div>
-                    
-                    <!-- Game Info Section -->
-                    <div style="
-                        background: ${gameColors.bgLight};
-                        border-radius: 12px; /* var(--radius-md) */
-                        padding: 16px; /* var(--space-md) */
-                        margin-bottom: 24px;
-                    ">
-                        <h3 style="
-                            color: ${gameColors.textDark};
-                            margin-bottom: 12px;
-                            font-size: 1.1rem;
-                            font-weight: 600;
-                            text-align: center;
-                        ">🏆 Statistik Game</h3>
-                        
-                        <div style="
-                            display: grid;
-                            grid-template-columns: 1fr 1fr;
-                            gap: 12px;
-                        ">
-                            <div style="text-align: center;">
-                                <div style="
-                                    color: ${gameColors.textMedium};
-                                    font-size: 0.85rem;
-                                    margin-bottom: 4px;
-                                ">Level Tertinggi</div>
-                                <div style="
-                                    color: ${gameColors.gold};
-                                    font-size: 1.2rem;
-                                    font-weight: 700;
-                                ">${window.gameConfig.currentLevel}</div>
-                            </div>
-                            
-                            <div style="text-align: center;">
-                                <div style="
-                                    color: ${gameColors.textMedium};
-                                    font-size: 0.85rem;
-                                    margin-bottom: 4px;
-                                ">Skor Tertinggi</div>
-                                <div style="
-                                    color: ${gameColors.success};
-                                    font-size: 1.2rem;
-                                    font-weight: 700;
-                                ">${window.gameConfig.highScore}</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Footer with branding -->
-                    <div style="
-                        margin-top: 8px;
-                        font-size: 0.85rem;
-                        color: ${gameColors.textLight};
-                        text-align: center;
-                        padding-top: 16px;
-                        border-top: 1px solid ${gameColors.bgLight};
-                    ">
-                        <div style="
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            gap: 8px;
-                            margin-bottom: 4px;
-                        ">
-                            <span style="color: ${gameColors.primary};">◼</span>
-                            <span style="color: ${gameColors.gold};">◼</span>
-                            <span style="color: ${gameColors.success};">◼</span>
-                        </div>
-                        <p style="margin: 0;">Dibuat dengan ❤️ oleh <strong>PATRION</strong></p>
-                        <p style="margin: 4px 0 0 0; font-size: 0.75rem;">game.patrion.id</p>
-                    </div>
-                `;
-                
-                document.body.appendChild(screenshotContainer);
-                
-                // Wait a moment for styles to apply
-                await new Promise(resolve => setTimeout(resolve, 100));
-                
-                // Take screenshot
-                const canvas = await html2canvas(screenshotContainer, {
-                    scale: 2,
-                    useCORS: true,
-                    backgroundColor: gameColors.white,
-                    logging: false,
-                    allowTaint: true,
-                    imageTimeout: 5000,
-                    removeContainer: true
-                });
-                
-                // Remove temporary container
-                document.body.removeChild(screenshotContainer);
-                
-                // Display the screenshot
-                preview.innerHTML = '';
-                
-                const canvasContainer = document.createElement('div');
-                canvasContainer.style.textAlign = 'center';
-                
-                const canvasElement = document.createElement('canvas');
-                canvasElement.className = 'screenshot-canvas';
-                canvasElement.width = canvas.width;
-                canvasElement.height = canvas.height;
-                const ctx = canvasElement.getContext('2d');
-                
-                // Add subtle background pattern to canvas
-                ctx.fillStyle = gameColors.white;
-                ctx.fillRect(0, 0, canvasElement.width, canvasElement.height);
-                
-                // Draw the screenshot
-                ctx.drawImage(canvas, 0, 0);
-                
-                // Add a subtle border like in-game cards
-                ctx.strokeStyle = gameColors.gold;
-                ctx.lineWidth = 6;
-                ctx.strokeRect(3, 3, canvasElement.width - 6, canvasElement.height - 6);
-                
-                canvasContainer.appendChild(canvasElement);
-                
-                // Add download button with game-style
-                const downloadBtn = document.createElement('button');
-                downloadBtn.className = 'modal-button';
-                downloadBtn.innerHTML = '<span>💾</span> Download Gambar';
-                downloadBtn.style.marginTop = 'var(--space-md)';
-                downloadBtn.onclick = () => {
-                    const link = document.createElement('a');
-                    const fileName = `pahlawan-puzzle-${window.gameConfig.playerName.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}.png`;
-                    link.download = fileName;
-                    link.href = canvasElement.toDataURL('image/png');
-                    link.click();
-                    playSFX('sfx_button_click');
-                    
-                    // Show success message
-                    const originalText = downloadBtn.innerHTML;
-                    downloadBtn.innerHTML = '<span>✅</span> Berhasil!';
-                    downloadBtn.disabled = true;
-                    setTimeout(() => {
-                        downloadBtn.innerHTML = originalText;
-                        downloadBtn.disabled = false;
-                    }, 2000);
-                };
-                
-                canvasContainer.appendChild(downloadBtn);
-                
-                // Add share options
-                const shareNote = document.createElement('p');
-                shareNote.style.color = 'var(--color-text-medium)';
-                shareNote.style.fontSize = '0.9rem';
-                shareNote.style.marginTop = 'var(--space-sm)';
-                shareNote.innerHTML = 'Bagikan screenshot ini dengan tombol di atas!';
-                
-                canvasContainer.appendChild(shareNote);
-                preview.appendChild(canvasContainer);
-                
-                console.log('Screenshot created successfully with game colors');
-                
-            } catch (error) {
-                console.error('Error creating screenshot:', error);
-                preview.innerHTML = `
-                    <div style="text-align: center; padding: var(--space-md); background: var(--color-bg-light); border-radius: var(--radius-lg);">
-                        <p style="color: var(--color-error); margin-bottom: var(--space-sm);">❌ Gagal membuat screenshot</p>
-                        <p style="font-size: 0.9rem; color: var(--color-text-medium);">
-                            ${error.message || 'Terjadi kesalahan saat membuat gambar.'}
-                        </p>
-                        <button class="modal-button secondary" onclick="captureScreenshot()" style="margin-top: var(--space-sm);">
-                            <span>🔄</span> Coba Lagi
-                        </button>
-                    </div>
-                `;
             }
         }
 
@@ -2820,8 +3516,9 @@
         window.addEventListener('DOMContentLoaded', () => {
             run('play');
             
-            // Add touch event for mobile keyboard
+            // Add touch event for mobile interactions
             document.addEventListener('touchstart', function() {
+                // Resume audio context if suspended
                 if (audioContext && audioContext.state === 'suspended') {
                     audioContext.resume();
                 }
