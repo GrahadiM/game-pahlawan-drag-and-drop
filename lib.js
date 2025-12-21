@@ -97,10 +97,24 @@ window.lib = {
             if (saved) {
                 return JSON.parse(saved);
             }
-            return { leaderboard: [] };
+            return { 
+                leaderboard: [],
+                settings: {
+                    sfxVolume: 0.7,
+                    bgmVolume: 0.5,
+                    hintCount: 3
+                }
+            };
         } catch (err) {
             console.error('Error loading game state:', err);
-            return { leaderboard: [] };
+            return { 
+                leaderboard: [],
+                settings: {
+                    sfxVolume: 0.7,
+                    bgmVolume: 0.5,
+                    hintCount: 3
+                }
+            };
         }
     },
 
@@ -117,10 +131,43 @@ window.lib = {
     async deleteUserGameState() {
         try {
             localStorage.removeItem('gameState');
+            localStorage.removeItem('pahlawan_leaderboard');
             return { success: true };
         } catch (err) {
             console.error('Error deleting game state:', err);
             return { success: false };
+        }
+    },
+    
+    // New function to save settings
+    async saveSettings(settings) {
+        try {
+            const currentState = await this.getUserGameState();
+            currentState.settings = settings;
+            await this.saveUserGameState(currentState);
+            return { success: true };
+        } catch (err) {
+            console.error('Error saving settings:', err);
+            return { success: false };
+        }
+    },
+    
+    // New function to get settings
+    async getSettings() {
+        try {
+            const state = await this.getUserGameState();
+            return state.settings || {
+                sfxVolume: 0.7,
+                bgmVolume: 0.5,
+                hintCount: 3
+            };
+        } catch (err) {
+            console.error('Error getting settings:', err);
+            return {
+                sfxVolume: 0.7,
+                bgmVolume: 0.5,
+                hintCount: 3
+            };
         }
     }
 };
